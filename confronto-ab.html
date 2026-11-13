@@ -71,6 +71,41 @@ input[type=range]{width:100%;accent-color:var(--accent)}input[type=range]:disabl
 .refitem{display:flex;gap:8px;justify-content:space-between;align-items:center;padding:4px 0;border-top:1px solid var(--line);font-size:.8rem}
 details{margin:0 0 12px}details>summary{cursor:pointer;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-size:.75rem;padding:4px 0}
 ol,ul{margin:6px 0 8px;padding-left:20px}
+/* ===== Guida rapida passo passo (identica sulle due pagine) ===== */
+.guideCard{background:var(--surface,var(--panel));border:1px solid var(--line);border-radius:16px;padding:0;margin:14px 0 16px;color:var(--text);font-size:.95rem;line-height:1.55}
+.guideCard>summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:14px 18px;font-weight:700;font-size:1rem;color:var(--text);text-transform:none;letter-spacing:0;border-radius:16px}
+.guideCard>summary::-webkit-details-marker{display:none}
+.guideCard>summary::before{content:"";flex:0 0 auto;width:8px;height:8px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);transition:transform .2s ease;margin:0 2px}
+.guideCard[open]>summary::before{transform:rotate(45deg)}
+.guideCard>summary:hover{background:var(--surface2,var(--panel2))}
+.guideCard>summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.guideCard .guideHint{margin:-4px 18px 10px 38px;font-size:.85rem;color:var(--muted)}
+.guideSteps{list-style:none;margin:0;padding:4px 18px 18px;display:grid;gap:10px}
+.guideStep{display:grid;grid-template-columns:2.25rem minmax(0,1fr);column-gap:14px;row-gap:10px;align-items:start;background:var(--surface2,var(--panel2));border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.guideNum{grid-column:1;grid-row:1;display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border-radius:50%;background:var(--accent);color:var(--accent-text);font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums}
+.guideBody{grid-column:2;grid-row:1;min-width:0}
+.guideTitle{margin:5px 0 4px;font-size:1rem;font-weight:700;color:var(--text);letter-spacing:0;text-transform:none}
+.guideBody p{margin:0 0 6px}.guideBody p:last-child{margin-bottom:0}
+.guideSub{margin:6px 0 0;padding-left:18px}.guideSub li{margin:3px 0}
+.guideCard kbd{display:inline-block;font:600 .8em/1.4 ui-monospace,Menlo,Consolas,monospace;padding:0 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--surface,var(--panel));color:var(--text)}
+.guideCard em{font-style:normal;font-weight:600;color:var(--text)}
+/* spazio per uno screenshot futuro: basta aggiungere <figure> o <img> nell'elemento .guideStep, al posto del commento slot */
+.guideStep>figure,.guideStep>img{grid-column:2;margin:0;max-width:100%}
+.guideStep>img,.guideStep>figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:10px}
+.guideStep>figure figcaption{margin-top:6px;font-size:.8rem;color:var(--muted)}
+@media (min-width:760px){
+ .guideStep:has(>figure),.guideStep:has(>img){grid-template-columns:2.25rem minmax(0,1fr) minmax(0,40%)}
+ .guideStep>figure,.guideStep>img{grid-column:3;grid-row:1}
+}
+@media (max-width:640px){
+ .guideCard>summary{padding:12px 14px;font-size:.95rem}
+ .guideCard .guideHint{margin-left:34px;margin-right:14px}
+ .guideSteps{padding:4px 12px 14px}
+ .guideStep{grid-template-columns:1.9rem minmax(0,1fr);column-gap:10px;padding:12px}
+ .guideNum{width:1.9rem;height:1.9rem;font-size:.9rem}
+}
+@media (prefers-reduced-motion:reduce){.guideCard>summary::before{transition:none}}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 /* ===== intestazione e piè di pagina condivisi del sito (identici sulle due pagine) ===== */
 :root{--site-max:1280px}
 .sn,.sf{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.4}
@@ -116,6 +151,51 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 <span class="item"><i class="led" id="ledSync"></i><span id="lblSync">Sync spenta</span></span>
 <span class="item"><i class="led" id="ledSr"></i><span id="lblSr">—</span></span>
 </div></div>
+<details class="card guideCard" open>
+<summary>Guida rapida passo passo (come usare questo strumento)</summary>
+<p class="guideHint">Quattro passaggi per confrontare il tuo mix con i riferimenti in modo onesto. Puoi chiudere questa guida in qualsiasi momento.</p>
+<ol class="guideSteps" role="list">
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">1</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 1: </span>Imposta la Sorgente A: il tuo mix</h3>
+<p>In <em>Sorgente A</em> scegli come far arrivare il tuo mix:</p>
+<ul class="guideSub">
+<li><em>File A (Mix)</em>: premi <em>Carica File A</em> o trascina il mix esportato nel riquadro. A e B condividono lo stesso trasporto.</li>
+<li><em>DAW Live</em>: ascolti il mix mentre lavori, senza esportare. Installa un driver audio virtuale (per esempio BlackHole 2ch su Mac) e nel DAW imposta come <em>uscita audio</em> quel dispositivo. Poi apri <em>Collegamento al DAW e audio</em> più in basso, premi <em>Attiva gli ingressi audio</em>, scegli come <em>Ingresso (dal DAW)</em> il dispositivo virtuale e come <em>Uscita</em> le tue cuffie o la scheda audio (mai lo stesso dispositivo virtuale), quindi premi <em>Collega</em>. Gli indicatori in alto confermano il segnale.</li>
+</ul>
+</div>
+<!-- slot-screenshot-passo-1 -->
+</li>
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">2</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 2: </span>Carica i riferimenti (Sorgente B)</h3>
+<p>Premi <em>Aggiungi riferimento</em> e scegli uno o più brani (fino a 6, anche insieme). Diventano <em>B1</em>…<em>B6</em>; in <em>Schede dei brani</em> trovi tonalità, tempo, loudness e dinamica di ciascuno. I file restano sul tuo computer.</p>
+</div>
+<!-- slot-screenshot-passo-2 -->
+</li>
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">3</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 3: </span>Pareggia il volume e allinea i brani</h3>
+<p>Lascia attivo <em>Pareggio automatico (abbassa solo il più forte)</em>: chi suona più forte sembra sempre migliore, così il confronto è onesto. Con il DAW dal vivo scegli in <em>Misura di A dal vivo</em> la loudness integrata o a breve termine e premi <em>Azzera</em> quando cambi sezione. In alternativa usa <em>Match A → B</em> o <em>Match B → A</em> (i file non vengono modificati; <em>Azzera trim</em> annulla).</p>
+<p>Per far coincidere le stesse sezioni apri <em>Sincronizzazione col DAW</em>: <em>Allineamento di B (s)</em> sposta il riferimento in secondi. Con il DAW dal vivo puoi far partire B insieme al DAW (MIDI o segnale audio) e correggere un eventuale scarto con <em>Ritardo audio del DAW (ms)</em>.</p>
+</div>
+<!-- slot-screenshot-passo-3 -->
+</li>
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">4</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 4: </span>Alterna A e B e ascolta i dettagli</h3>
+<p>In <em>Ascolto</em> premi <em>▶ Riproduci</em> e passa al volo tra <em>A</em> e i riferimenti con i pulsanti o con i tasti <kbd>A</kbd>, <kbd>B</kbd>, <kbd>1</kbd>…<kbd>6</kbd> e <kbd>T</kbd> per alternare (il cambio è senza click). Con <em>Inizio</em> e <em>Fine</em> imposti un ciclo.</p>
+<p>In <em>Modalità di ascolto</em> provi <em>Mono</em>, <em>Mid</em>, <em>Side</em>, <em>Solo L</em> e <em>Solo R</em>; in <em>Ascolto per banda</em> isoli <em>Basse</em>, <em>Medie</em>, <em>Alte</em> o una gamma <em>Personalizzata</em>. Spettro, correlazione di fase e goniometro si aggiornano dal vivo. I tasti funzionano solo quando la finestra del browser è attiva.</p>
+</div>
+<!-- slot-screenshot-passo-4 -->
+</li>
+</ol>
+</details>
+<script>/* guida: Spazio sul titolo apre/chiude la guida invece di avviare la riproduzione */(function(){var s=document.querySelectorAll(".guideCard>summary");for(var i=0;i<s.length;i++){["keydown","keyup"].forEach(function(t){s[i].addEventListener(t,function(e){if(e.key===" "||e.code==="Space")e.stopPropagation();});});}})();</script>
 
 <div class="layout">
 <div>

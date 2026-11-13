@@ -107,6 +107,41 @@ th button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .tbl-wrap{overflow-x:auto}
 input[type=text],input[type=number]{font:inherit;color:var(--text);background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
 .small{font-size:.85rem}
+/* ===== Guida rapida passo passo (identica sulle due pagine) ===== */
+.guideCard{background:var(--surface,var(--panel));border:1px solid var(--line);border-radius:16px;padding:0;margin:14px 0 16px;color:var(--text);font-size:.95rem;line-height:1.55}
+.guideCard>summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:14px 18px;font-weight:700;font-size:1rem;color:var(--text);text-transform:none;letter-spacing:0;border-radius:16px}
+.guideCard>summary::-webkit-details-marker{display:none}
+.guideCard>summary::before{content:"";flex:0 0 auto;width:8px;height:8px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);transition:transform .2s ease;margin:0 2px}
+.guideCard[open]>summary::before{transform:rotate(45deg)}
+.guideCard>summary:hover{background:var(--surface2,var(--panel2))}
+.guideCard>summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.guideCard .guideHint{margin:-4px 18px 10px 38px;font-size:.85rem;color:var(--muted)}
+.guideSteps{list-style:none;margin:0;padding:4px 18px 18px;display:grid;gap:10px}
+.guideStep{display:grid;grid-template-columns:2.25rem minmax(0,1fr);column-gap:14px;row-gap:10px;align-items:start;background:var(--surface2,var(--panel2));border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.guideNum{grid-column:1;grid-row:1;display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;border-radius:50%;background:var(--accent);color:var(--accent-text);font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums}
+.guideBody{grid-column:2;grid-row:1;min-width:0}
+.guideTitle{margin:5px 0 4px;font-size:1rem;font-weight:700;color:var(--text);letter-spacing:0;text-transform:none}
+.guideBody p{margin:0 0 6px}.guideBody p:last-child{margin-bottom:0}
+.guideSub{margin:6px 0 0;padding-left:18px}.guideSub li{margin:3px 0}
+.guideCard kbd{display:inline-block;font:600 .8em/1.4 ui-monospace,Menlo,Consolas,monospace;padding:0 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--surface,var(--panel));color:var(--text)}
+.guideCard em{font-style:normal;font-weight:600;color:var(--text)}
+/* spazio per uno screenshot futuro: basta aggiungere <figure> o <img> nell'elemento .guideStep, al posto del commento slot */
+.guideStep>figure,.guideStep>img{grid-column:2;margin:0;max-width:100%}
+.guideStep>img,.guideStep>figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:10px}
+.guideStep>figure figcaption{margin-top:6px;font-size:.8rem;color:var(--muted)}
+@media (min-width:760px){
+ .guideStep:has(>figure),.guideStep:has(>img){grid-template-columns:2.25rem minmax(0,1fr) minmax(0,40%)}
+ .guideStep>figure,.guideStep>img{grid-column:3;grid-row:1}
+}
+@media (max-width:640px){
+ .guideCard>summary{padding:12px 14px;font-size:.95rem}
+ .guideCard .guideHint{margin-left:34px;margin-right:14px}
+ .guideSteps{padding:4px 12px 14px}
+ .guideStep{grid-template-columns:1.9rem minmax(0,1fr);column-gap:10px;padding:12px}
+ .guideNum{width:1.9rem;height:1.9rem;font-size:.9rem}
+}
+@media (prefers-reduced-motion:reduce){.guideCard>summary::before{transition:none}}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 /* ===== intestazione e piè di pagina condivisi del sito (identici sulle due pagine) ===== */
 :root{--site-max:1000px}
 .sn,.sf{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.4}
@@ -172,6 +207,59 @@ input[type=text],input[type=number]{font:inherit;color:var(--text);background:va
 <div class="topbar"><h1>Controllo audio prima della consegna</h1></div>
 <p class="muted">Trascina un file e ottieni le misure che contano prima di consegnarlo a un cliente. Tutto avviene nel tuo browser: <strong>il file non viene caricato da nessuna parte</strong>.</p>
 
+<details class="card guideCard" open>
+<summary>Guida rapida passo passo (come usare questo strumento)</summary>
+<p class="guideHint">Cinque passaggi per controllare un brano prima della consegna. Puoi chiudere questa guida in qualsiasi momento.</p>
+<ol class="guideSteps" role="list">
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">1</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 1: </span>Carica il tuo file audio</h3>
+<p>Trascina un brano (WAV, MP3, FLAC, M4A, OGG) nel riquadro <em>«Trascina qui un file audio»</em> oppure clicca per selezionarlo. Tutto avviene nel tuo browser: nessun file viene caricato online.</p>
+</div>
+<!-- slot-screenshot-passo-1 -->
+</li>
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">2</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 2: </span>Scegli obiettivo e genere</h3>
+<p>In <em>Obiettivo di consegna</em> imposta la destinazione: <em>Musica (loudness libera)</em>, <em>Musica per streaming (riferimento −14 LUFS)</em>, <em>Musica con un mio obiettivo di loudness</em>, <em>Podcast e parlato (−16 LUFS)</em>, <em>Audiolibro ACX/Audible</em> o <em>Broadcast EBU R128 (−23 LUFS)</em>. Se vuoi, scegli anche un <em>Genere di riferimento</em> per confrontare loudness e timbro con le fasce tipiche.</p>
+</div>
+<!-- slot-screenshot-passo-2 -->
+</li>
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">3</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 3: </span>Esplora le 4 schede dei risultati</h3>
+<p>Dopo l’analisi trovi in alto il riepilogo e quattro schede:</p>
+<ul class="guideSub">
+<li><em>Tonalità &amp; Ritmo</em>: chiave rilevata, codice Camelot, BPM e carattere. Puoi correggere la chiave cliccando sulla ruota o regolare il tempo con <kbd>÷2</kbd>, <kbd>×2</kbd> e <kbd>Tap</kbd>.</li>
+<li><em>Loudness &amp; Controlli</em>: LUFS integrati, True Peak, clipping, fase stereo e conformità all’obiettivo scelto.</li>
+<li><em>Dinamica &amp; Spettro</em>: escursione dinamica (DR, PLR, LRA) e bilanciamento delle frequenze.</li>
+<li><em>Riferimenti &amp; Report</em>: carica fino a 4 brani di riferimento per misurare le differenze con il tuo mix e copia il rapporto testuale.</li>
+</ul>
+</div>
+<!-- slot-screenshot-passo-3 -->
+</li>
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">4</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 4: </span>Ascolta a volume pareggiato (mini-player in basso)</h3>
+<p>Usa la barra fissa in basso per riascoltare il brano o passare ai riferimenti con il menu <em>Ascolta</em>. Attiva <em>Normalizza a −14 LUFS</em> per confrontarli allo stesso volume percepito. La barra spaziatrice avvia e ferma l’ascolto.</p>
+</div>
+<!-- slot-screenshot-passo-4 -->
+</li>
+<li class="guideStep">
+<span class="guideNum" aria-hidden="true">5</span>
+<div class="guideBody">
+<h3 class="guideTitle"><span class="sr-only">Passo 5: </span>Analizza più brani insieme (scheda Libreria)</h3>
+<p>Passa alla scheda <em>Libreria (più file)</em> in alto e trascina o seleziona più brani insieme. Puoi filtrare quelli armonicamente compatibili con il brano principale, scaricare la tabella in CSV o creare un profilo di genere dai tuoi brani preferiti.</p>
+</div>
+<!-- slot-screenshot-passo-5 -->
+</li>
+</ol>
+</details>
+<script>/* guida: Spazio sul titolo apre/chiude la guida invece di avviare la riproduzione */(function(){var s=document.querySelectorAll(".guideCard>summary");for(var i=0;i<s.length;i++){["keydown","keyup"].forEach(function(t){s[i].addEventListener(t,function(e){if(e.key===" "||e.code==="Space")e.stopPropagation();});});}})();</script>
 <div class="tabs" role="tablist" aria-label="Sezioni">
 <button role="tab" id="tabA" aria-selected="true" aria-controls="panelA">Analisi di un brano</button>
 <button role="tab" id="tabL" aria-selected="false" aria-controls="panelL">Libreria (più file)</button>

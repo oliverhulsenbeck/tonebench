@@ -106,6 +106,18 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 }
 @media (prefers-reduced-motion:reduce){.guideCard>summary::before{transition:none}}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* guida: configurazione MIDI per Play/Stop sincronizzato (solo in Confronto A/B) */
+.guideMidi{margin:0 18px 18px;padding-top:16px;border-top:1px solid var(--line)}
+.guideMidiTitle{margin:0 0 6px;font-size:1rem;font-weight:700;color:var(--text);letter-spacing:0;text-transform:none}
+.guideMidi>p{margin:0 0 12px;color:var(--muted)}
+.guideMidiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:10px;margin:0 0 10px}
+.guideMidiCard{background:var(--surface2,var(--panel2));border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.guideMidiCard h4{margin:0 0 6px;font-size:.95rem;font-weight:700;color:var(--text);letter-spacing:0;text-transform:none}
+.guideMidiCard ol{margin:0;padding-left:20px}.guideMidiCard li{margin:4px 0}
+.guideMidiNote{background:var(--surface2,var(--panel2));border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;padding:10px 14px}
+.guideMidiNote p{margin:0 0 6px}.guideMidiNote p:last-child{margin-bottom:0}
+.guideMidiNote ul{margin:4px 0 6px;padding-left:20px}.guideMidiNote li{margin:3px 0}
+@media (max-width:640px){.guideMidi{margin:0 12px 14px}}
 /* ===== intestazione e piè di pagina condivisi del sito (identici sulle due pagine) ===== */
 :root{--site-max:1280px}
 .sn,.sf{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.4}
@@ -194,6 +206,35 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 <!-- slot-screenshot-passo-4 -->
 </li>
 </ol>
+<section class="guideMidi" aria-labelledby="guideMidiT">
+<h3 class="guideMidiTitle" id="guideMidiT">Play/Stop sincronizzato con il DAW (MIDI, facoltativo)</h3>
+<p>Serve un «cavo MIDI virtuale» del sistema che faccia dialogare il browser (Chrome o Edge) e il DAW: quando premi Play nel DAW parte anche il riferimento qui e, se il tuo DAW lo accetta, puoi anche avviare e fermare il DAW da ToneBench. Crea <em>due</em> porte: una per i messaggi dal DAW a ToneBench e una per quelli da ToneBench al DAW (con una sola porta i messaggi tornerebbero indietro).</p>
+<div class="guideMidiGrid">
+<div class="guideMidiCard">
+<h4>macOS · Driver IAC (già incluso)</h4>
+<ol>
+<li>Apri <em>Configurazione MIDI Audio</em> (cercala con Spotlight, <kbd>Cmd</kbd> + <kbd>Spazio</kbd>), poi menu <em>Finestra → Mostra Studio MIDI</em>.</li>
+<li>Fai doppio clic su <em>Driver IAC</em> e attiva il dispositivo con la casella in alto (in inglese <em>Device is online</em>). Nell’elenco delle porte tieni <em>Bus 1</em> e aggiungine una seconda con <kbd>+</kbd> (per esempio <em>Bus 2</em>).</li>
+<li>Nel DAW usa <em>Driver IAC Bus 1</em> come uscita verso ToneBench e <em>Driver IAC Bus 2</em> come ingresso da ToneBench.</li>
+</ol>
+</div>
+<div class="guideMidiCard">
+<h4>Windows · loopMIDI (gratuito)</h4>
+<ol>
+<li>Scarica e avvia <em>loopMIDI</em> (utility gratuita di Tobias Erichsen). Scrivi un nome, per esempio <em>ToneBench IN</em>, e premi <kbd>+</kbd>; poi crea allo stesso modo <em>ToneBench OUT</em>. Lascia loopMIDI aperto in background.</li>
+<li>Nel DAW usa <em>ToneBench IN</em> come uscita verso ToneBench e <em>ToneBench OUT</em> come ingresso da ToneBench.</li>
+</ol>
+</div>
+</div>
+<div class="guideMidiNote">
+<p><strong>Nel DAW.</strong> ToneBench usa i messaggi di trasporto MIDI standard (Start, Stop, Continue, clock e posizione), non MMC né CC.</p>
+<ul>
+<li><em>Il DAW comanda, ToneBench segue (consigliato):</em> attiva l’invio del <em>MIDI Clock</em> con la posizione (Song Position Pointer) sulla porta verso ToneBench. In Ableton Live: <em>Preferences → Link, Tempo &amp; MIDI</em>, attiva <em>Sync</em> sulla porta di uscita e scegli il clock <em>Song</em>. In FL Studio: <em>Options → MIDI settings</em>, nell’uscita scegli la porta, attiva <em>Send master sync</em> e il tipo <em>MIDI clock</em>. In Logic Pro, Cubase o Reaper attiva l’invio del MIDI Clock (con la posizione) verso la stessa porta nelle impostazioni di sincronizzazione MIDI.</li>
+<li><em>ToneBench comanda il DAW:</em> il DAW deve accettare Start e Stop MIDI sulla porta da ToneBench (sincronizzazione a un clock MIDI esterno). Non tutti i DAW lo fanno: alcuni chiedono anche il clock, altri seguono solo MMC o MTC. In quel caso usa la direzione consigliata qui sopra e avvia dal DAW.</li>
+</ul>
+<p><strong>In ToneBench.</strong> Con la <em>Sorgente A</em> su <em>DAW Live</em>, apri <em>Sincronizzazione col DAW</em> in fondo alla pagina e scegli <em>MIDI: Play, Stop e posizione</em>. Premi <em>Attiva il MIDI</em> (il browser chiede il permesso), poi in <em>Porta MIDI Ingresso (dal DAW)</em> scegli la porta su cui il DAW invia il clock e, se vuoi comandare il DAW, in <em>Porta MIDI Uscita (verso il DAW)</em> l’altra porta, spuntando <em>Invia solo Play/Stop (Spazio) alla DAW tramite MIDI Out</em>. Il riquadro di stato sotto mostra in tempo reale cosa arriva; se il tempo stimato oscilla, scrivi i <em>BPM</em> del progetto.</p>
+</div>
+</section>
 </details>
 <script>/* guida: Spazio sul titolo apre/chiude la guida invece di avviare la riproduzione */(function(){var s=document.querySelectorAll(".guideCard>summary");for(var i=0;i<s.length;i++){["keydown","keyup"].forEach(function(t){s[i].addEventListener(t,function(e){if(e.key===" "||e.code==="Space")e.stopPropagation();});});}})();</script>
 

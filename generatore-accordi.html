@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Generatore Accordi · ToneBench</title>
+<meta name="description" content="Progressioni di accordi per genere ed emozione, modi diversi di raggiungere un accordo e di cambiare tonalità, con ascolto e esportazione MIDI su 4 o 8 battute. Tutto nel browser.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ToneBench">
+<meta property="og:title" content="Generatore Accordi · ToneBench">
+<meta property="og:description" content="Progressioni di accordi per genere ed emozione, cambi di tonalità, ascolto ed esportazione MIDI su 4 o 8 battute. Tutto nel browser.">
+<meta name="theme-color" content="#0E1015">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e1013'/%3E%3Cpath d='M5 16h4l2.5-7 4 14 3.5-11 2.5 7 2-3H27' fill='none' stroke='%234ad6a0' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script>/* tema condiviso tra le pagine (chiave qc_theme), applicato prima del disegno per evitare il lampo */try{var t=localStorage.getItem("qc_theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<style>
+/* =====================================================================================
+   ToneBench · Generatore Accordi — design system «Studio Dock» (stessi token di index.html e confronto-ab.html)
+   Tutto il CSS è qui: nessuna dipendenza esterna per il layout (Google Fonts facoltativo, con ripiego di sistema)
+   ===================================================================================== */
+:root{
+ --bg:#0E1015;--side:#12151B;--surface:#171B22;--surface2:#1E232D;--inset:#1E232D;--inset-line:rgba(255,255,255,.09);--line:rgba(255,255,255,.06);
+ --text:#E9E6DF;--muted:#8E939D;--faint:#5E636D;--accent:#E2A54A;--accent-text:#1A1308;--accent-soft:rgba(226,165,74,.13);--sage:#8DB596;--sage-soft:rgba(141,181,150,.15);
+ --ok:#8DB596;--warn:#F08A5D;--bad:#E3574D;--c1:#E2A54A;--c2:#8FA3BF;--c3:#8DB596;--c4:#D88570;
+ --card-shadow:none;--sans:'Inter Tight','Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+ --r-card:22px;--r:12px;--site-max:1120px;color-scheme:dark;
+ /* funzioni armoniche: tinte distinte e leggibili su ardesia */
+ --T:#9CCBA6;--PD:#9DB4D6;--D:#EBB45E;--X:#CDA4EA;
+ --Tbg:rgba(141,181,150,.14);--PDbg:rgba(143,163,191,.15);--Dbg:rgba(226,165,74,.14);--Xbg:rgba(196,150,230,.14);
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)
+}
+:root[data-theme="light"]{
+ --bg:#F2F0EB;--side:#E9E6DF;--surface:#FFFFFF;--surface2:#F5F3EE;--inset:#F2EFE9;--inset-line:rgba(30,34,40,.13);--line:rgba(30,34,40,.08);
+ --text:#1E2127;--muted:#62676F;--faint:#9A9EA5;--accent:#AE7116;--accent-text:#FFFFFF;--accent-soft:rgba(174,113,22,.10);--sage:#4C7B5A;--sage-soft:rgba(76,123,90,.12);
+ --ok:#4C7B5A;--warn:#C2510F;--bad:#B4302A;--c1:#AE7116;--c2:#4E6788;--c3:#4C7B5A;--c4:#B65A45;
+ --card-shadow:0 1px 2px rgba(40,35,25,.04),0 6px 20px rgba(40,35,25,.04);color-scheme:light;
+ --T:#2F6A43;--PD:#2F5584;--D:#8E5A0B;--X:#7A3F9E;
+ --Tbg:#E6F1E8;--PDbg:#E6EDF6;--Dbg:#F7ECDA;--Xbg:#F1E7F7
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;transition:background-color .3s,color .3s}
+::selection{background:var(--accent-soft)}
+.wrap{max-width:var(--site-max);margin:0 auto;padding:22px 28px 56px}
+h1,h2,h3,h4{font-family:var(--sans);letter-spacing:-.015em}
+h2{font-size:1.15rem;font-weight:600;margin:0 0 8px}h3{font-size:1.02rem;font-weight:600;margin:0}p{margin:0 0 10px}
+.muted{color:var(--muted)}.small{font-size:.84rem}.hidden{display:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* ---------- barra del sito (identica alle altre pagine) ---------- */
+.sn,.sf{font-family:var(--sans);line-height:1.4}
+.sn{background:transparent;border-bottom:1px solid var(--line)}
+.sn__in{max-width:1280px;margin:0 auto;padding:12px 28px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.sn__brand{display:inline-flex;align-items:center;gap:9px;margin-right:auto;color:var(--text);text-decoration:none;font-weight:700;font-size:.95rem;letter-spacing:-.01em;border-radius:8px}
+.sn__brand svg{width:26px;height:26px;flex:0 0 auto;display:block}
+.sn__nav{order:2;min-width:0}
+.sn__links{display:flex;gap:4px;list-style:none;margin:0;padding:0;overflow-x:auto;scrollbar-width:none}
+.sn__links::-webkit-scrollbar{display:none}
+.sn__links a,.sn__soon{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:12px;border:1px solid transparent;font-size:.86rem;font-weight:500;line-height:1.2;color:var(--muted);text-decoration:none;white-space:nowrap}
+.sn__links a:hover{color:var(--text);border-color:var(--line)}
+.sn__links a[aria-current="page"]{background:var(--surface2);border-color:var(--line);color:var(--text)}
+.sn__theme{order:3;display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.82rem;line-height:1.2;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.sn__theme:hover{border-color:var(--muted)}.sn__ico{width:14px;height:14px;display:block}
+.sn__brand:focus-visible,.sn__links a:focus-visible,.sn__theme:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sf{max-width:1280px;margin:8px auto 0;padding:16px 18px calc(24px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);text-align:center;font-size:.78rem;color:var(--muted)}
+.sf p{margin:0}.sf .sf__lic{margin-top:4px;font-size:.72rem}.sf a{color:inherit;text-decoration:underline;text-underline-offset:2px}.sf a:hover{color:var(--text)}
+/* ---------- intestazione ---------- */
+.topbar{margin:6px 0 16px}
+.topbar h1{font-size:1.6rem;font-weight:700;letter-spacing:-.03em;margin:0 0 4px}
+.topbar .sub{margin:0;color:var(--muted);font-size:.92rem;max-width:760px}
+/* ---------- superfici morbide ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);padding:22px 24px;margin:14px 0;box-shadow:var(--card-shadow)}
+.settings{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;align-items:end}
+label{display:block;font-size:.8rem;font-weight:500;color:var(--muted);margin-bottom:6px}
+select,button,input[type=number]{font:inherit;color:var(--text);background:var(--inset);border:1px solid transparent;border-radius:var(--r);padding:9px 12px;width:100%}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%238E939D' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+input[type=number]{font-variant-numeric:tabular-nums}
+input[type=number][aria-invalid="true"]{border-color:var(--bad)}
+select:hover,button:hover,input[type=number]:hover{border-color:var(--inset-line)}
+select:focus,input[type=number]:focus{border-color:var(--accent)}
+button{cursor:pointer;width:auto;font-weight:500;transition:background-color .15s,border-color .15s,color .15s,transform .12s}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600;padding:10px 20px}
+button.primary:hover{filter:brightness(1.07)}
+select:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=checkbox],input[type=range]{accent-color:var(--accent)}
+.bpmMsg{margin:8px 0 0;color:var(--bad)}.bpmMsg:empty{display:none}
+.checks{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}.checks label{display:flex;gap:8px;align-items:center;color:var(--text);margin:0;font-size:.92rem;font-weight:400}.checks input{width:auto}
+.legend{display:flex;gap:8px;flex-wrap:wrap;font-size:.78rem;margin-top:14px}
+.legend span{border-radius:999px;padding:3px 11px;font-weight:600}
+.legend .lT{color:var(--T);background:var(--Tbg)}.legend .lPD{color:var(--PD);background:var(--PDbg)}.legend .lD{color:var(--D);background:var(--Dbg)}.legend .lX{color:var(--X);background:var(--Xbg)}
+/* schede a segmenti morbidi (come l'Analisi) */
+.tabs{display:flex;gap:2px;flex-wrap:wrap;margin:18px 0 0;padding:4px;width:max-content;max-width:100%;background:var(--side);border:1px solid var(--line);border-radius:14px}
+.tabs button{border:0;border-radius:10px;padding:8px 16px;background:transparent;color:var(--muted);font-weight:500}
+.tabs button:hover{color:var(--text)}
+.tabs button[aria-selected="true"]{background:var(--surface2);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.18)}
+:root[data-theme="light"] .tabs button[aria-selected="true"]{background:var(--surface);box-shadow:0 1px 3px rgba(40,35,25,.12)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:14px 0 4px}.row>div{min-width:170px}
+/* ---------- card delle progressioni ---------- */
+.pcard{background:var(--surface2);border:1px solid var(--line);border-radius:20px;padding:18px 20px;margin:14px 0}
+:root[data-theme="light"] .pcard{background:var(--surface);box-shadow:var(--card-shadow)}
+.pcard header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap}
+.tag{border-radius:999px;padding:3px 11px;font-size:.76rem;font-weight:600}
+.tag.best{color:var(--T);background:var(--Tbg)}.tag.alt{color:var(--muted);background:var(--inset)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:6px 0 14px}
+.arr{align-self:center;color:var(--faint);font-size:1.3rem}
+.chip{display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:16px;padding:9px 14px;min-width:80px;border:1px solid;text-align:center}
+.chip .rn{font-size:.78rem;color:var(--muted)}.chip .nm{font-size:1.4rem;font-weight:700;line-height:1.15;letter-spacing:-.02em}.chip .nt{font-size:.72rem;color:var(--muted);font-family:var(--mono)}.chip .fn{font-size:.66rem;font-weight:600;letter-spacing:.02em}
+.fT{background:var(--Tbg);border-color:color-mix(in srgb,var(--T) 45%,transparent)}.fT .nm,.fT .fn{color:var(--T)}
+.fPD{background:var(--PDbg);border-color:color-mix(in srgb,var(--PD) 45%,transparent)}.fPD .nm,.fPD .fn{color:var(--PD)}
+.fD{background:var(--Dbg);border-color:color-mix(in srgb,var(--D) 45%,transparent)}.fD .nm,.fD .fn{color:var(--D)}
+.fX{background:var(--Xbg);border-color:color-mix(in srgb,var(--X) 45%,transparent)}.fX .nm,.fX .fn{color:var(--X)}
+.chip.plain .nm{color:var(--text)}.chip.plain{background:var(--inset);border-color:var(--line)}.chip.plain .fn{color:var(--muted)}
+.line{margin:0 0 4px}.why{margin:10px 0 6px}.how{margin:0 0 8px;color:var(--muted)}
+.mods{margin:6px 0 0;padding-left:20px;color:var(--muted);font-size:.9rem}
+/* azioni: Ascolta · Scarica MIDI · Copia + scansione del ritmo armonico */
+.foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.act,.copy{padding:7px 14px;font-size:.86rem;border-radius:999px;background:var(--inset)}
+.act-play{min-width:104px;color:var(--text)}
+.act-play.is-on{background:var(--sage-soft);color:var(--sage);border-color:color-mix(in srgb,var(--sage) 45%,transparent)}
+.act-midi{background:var(--accent);color:var(--accent-text);font-weight:600}
+.act-midi:hover{filter:brightness(1.07)}
+.scan{margin-left:auto;font-size:.78rem;color:var(--muted);font-family:var(--mono)}
+.tips,.summary,.empty{background:var(--inset);border-radius:16px;padding:14px 18px;margin:14px 0}
+.tips ul{margin:6px 0 8px;padding-left:20px}
+.tbl{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}th{font-size:.8rem;font-weight:500;color:var(--muted)}tr:last-child td{border-bottom:0}
+input[type=range]{width:100%}
+.noteRead{line-height:1.6}
+@media (max-width:640px){
+ .wrap{padding:14px 16px 40px}.sn__in{padding:10px 16px}.sn__nav{order:4;width:100%}.sf{padding-left:16px;padding-right:16px}
+ .panel{padding:18px;border-radius:18px}.pcard{padding:16px;border-radius:18px}
+ .topbar h1{font-size:1.35rem}
+ .chip{min-width:68px;padding:8px 10px}.chip .nm{font-size:1.2rem}
+ .scan{margin-left:0;width:100%}
+}
+@media (prefers-reduced-motion:reduce){button,body{transition:none}}
+</style>
+</head>
+<body>
+<header class="sn">
+<div class="sn__in">
+<a class="sn__brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="#0e1013"/><path d="M5 16h4l2.5-7 4 14 3.5-11 2.5 7 2-3H27" fill="none" stroke="#4ad6a0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>ToneBench</span></a>
+<nav class="sn__nav" aria-label="Strumenti"><ul class="sn__links">
+<li><a href="index.html">Analisi Pre-Consegna</a></li>
+<li><a href="confronto-ab.html">Confronto A/B</a></li>
+<li><a href="generatore-accordi.html" aria-current="page">Generatore Accordi</a></li>
+</ul></nav>
+<button id="themeBtn" class="sn__theme" type="button" aria-label="Cambia tema, chiaro o scuro" title="Alterna tema chiaro e scuro"><svg class="sn__ico" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg>Tema</button>
+</div>
+</header>
+<div class="wrap">
+<div class="topbar">
+<div><h1>Generatore Accordi</h1><p class="sub">Progressioni e cambi di tonalità per genere ed emozione, in gradi e in accordi · ascolto ed esportazione MIDI su 4 o 8 battute</p></div>
+</div>
+<section class="panel setPanel" aria-label="Impostazioni">
+<div class="settings">
+<div><label for="key">Tonalità</label><select id="key"></select></div>
+<div><label for="genre">Genere (facoltativo)</label><select id="genre"></select></div>
+<div><label for="names">Nomi degli accordi</label><select id="names"><option value="en">C, D, E (americani)</option><option value="it">Do, Re, Mi (italiani)</option></select></div>
+<div><label for="loopBars">Lunghezza loop (MIDI e ascolto)</label><select id="loopBars"><option value="4" selected>4 battute (4/4)</option><option value="8">8 battute (4/4)</option></select></div>
+<div><label for="bpm">BPM</label><input type="number" id="bpm" min="40" max="240" step="1" value="120" inputmode="numeric" aria-describedby="bpmMsg"></div>
+</div>
+<p class="small bpmMsg" id="bpmMsg" role="status" aria-live="polite"></p>
+<div class="checks"><label><input type="checkbox" id="ext"> Usa le settime</label><label><input type="checkbox" id="notes"> Mostra le note degli accordi</label></div>
+<div class="legend" aria-label="Legenda dei colori"><span class="lT">tonica</span><span class="lPD">pre-dominante</span><span class="lD">dominante</span><span class="lX">colore (prestiti e accordi non della scala)</span></div>
+</section>
+<div class="tabs" role="tablist" aria-label="Strumenti">
+<button role="tab" id="t-gen" aria-selected="true" aria-controls="p-gen">Genera</button>
+<button role="tab" id="t-emo" aria-selected="false" aria-controls="p-emo">Per emozione</button>
+<button role="tab" id="t-ap" aria-selected="false" aria-controls="p-ap">Raggiungere un accordo</button>
+<button role="tab" id="t-mod" aria-selected="false" aria-controls="p-mod">Cambiare tonalità</button>
+</div>
+<section id="p-gen" role="tabpanel" aria-labelledby="t-gen" class="panel">
+<h2>Genera progressioni</h2>
+<p class="muted">Sei proposte nella tonalità scelta, scritte in gradi e in accordi. Con più audacia compaiono accordi in prestito, dominanti secondarie e sostituti di tritono: l’app ti dice sempre cosa ha cambiato.</p>
+<div class="row"><div><label for="len">Lunghezza</label><select id="len"><option value="4">4 accordi</option><option value="8">8 accordi</option></select></div>
+<div><label for="aud">Audacia</label><select id="aud"><option value="0">Classica</option><option value="1" selected>Colorata</option><option value="2">Audace</option></select></div>
+<div><button class="primary" id="go">Genera</button></div></div>
+<div id="genOut"></div>
+</section>
+<section id="p-emo" role="tabpanel" aria-labelledby="t-emo" class="panel hidden">
+<h2>Progressioni per emozione</h2>
+<p class="muted">Scegli l’emozione e quanta intensità vuoi: ottieni le progressioni più adatte, con il perché.</p>
+<div class="row"><div><label for="emo">Emozione</label><select id="emo"></select></div>
+<div style="min-width:220px"><label for="energy">Intensità: <span id="energyLab"></span></label><input type="range" id="energy" min="1" max="5" value="3"></div>
+<div><button class="primary" id="emoGo">Consiglia</button></div></div>
+<div id="emoOut"></div>
+</section>
+<section id="p-ap" role="tabpanel" aria-labelledby="t-ap" class="panel hidden">
+<h2>Raggiungere un accordo in modi diversi</h2>
+<p class="muted">Scegli l’accordo di arrivo: ottieni modi diversi di prepararlo, oltre a seguire la scala, con l’effetto di ognuno.</p>
+<div class="row"><div><label for="tgt">Accordo di arrivo</label><select id="tgt"></select></div><div><button class="primary" id="apGo">Mostra i modi</button></div></div>
+<div id="apOut"></div>
+</section>
+<section id="p-mod" role="tabpanel" aria-labelledby="t-mod" class="panel hidden">
+<h2>Cambiare tonalità</h2>
+<p class="muted">Parti dalla tonalità scelta in alto e scegli quella di arrivo: ottieni modi efficaci per arrivarci, con accordi scritti per esteso.</p>
+<div class="row"><div><label for="toKey">Tonalità di arrivo</label><select id="toKey"></select></div><div><button class="primary" id="modGo">Mostra i modi</button></div></div>
+<div id="modOut"></div>
+</section>
+<div class="panel small muted noteRead"><strong>Come leggerlo.</strong> I gradi sono scritti in numeri romani rispetto alla tonica (maiuscolo = accordo maggiore, minuscolo = minore, ♭ = abbassato di un semitono). Il MIDI e l’ascolto usano la lunghezza del loop scelta: con 3 accordi la scansione è 1 + 1 + 2 battute (2 + 2 + 4 su 8), così l’accordo di risoluzione chiude la frase; negli altri casi le battute si dividono in parti uguali o l’ultimo accordo si allunga per chiudere il giro. Sono tendenze comuni della teoria e della pratica, non regole: l’effetto di un giro dipende anche da ritmo, voicing, melodia e timbro, e l’orecchio ha sempre l’ultima parola.</div>
+</div>
+<footer class="sf"><p>Versione 0.6 Beta · Elaborazione 100% locale nel browser · Privacy: nessun file audio lascia il tuo dispositivo.</p><p class="sf__lic">Tonalità e BPM con <a href="https://essentia.upf.edu/" rel="noopener">Essentia.js</a> (Music Technology Group, UPF), rilasciato con licenza <a href="https://www.gnu.org/licenses/agpl-3.0.html" rel="noopener license">AGPL-3.0</a> · <a href="#">Codice sorgente di questo sito</a></p></footer>
+<script>
+// ===== Motore di teoria: nomi, accordi, progressioni, deviazioni, modulazioni =====
+var LET=["C","D","E","F","G","A","B"],NAT=[0,2,4,5,7,9,11],IT_L={C:"Do",D:"Re",E:"Mi",F:"Fa",G:"Sol",A:"La",B:"Si"};
+var BASE=[0,2,4,5,7,9,11],ROM={I:0,II:1,III:2,IV:3,V:4,VI:5,VII:6};
+function accStr(d){return d===0?"":(d>0?"♯":"♭").repeat(Math.abs(d));}
+function parseNote(s){var li=LET.indexOf(s.charAt(0)),acc=0;for(var i=1;i<s.length;i++){var c=s.charAt(i);if(c==="♯"||c==="#")acc++;else if(c==="♭"||c==="b")acc--;}return {li:li,pc:((NAT[li]+acc)%12+12)%12};}
+function spell(li,pc){var d=(((pc-NAT[li])%12)+12)%12;if(d>6)d-=12;return LET[li]+accStr(d);}
+function itName(n){return IT_L[n.charAt(0)]+n.slice(1);}
+var TOK=/^([b#]?)(VII|VI|IV|V|III|II|I|vii|vi|iv|v|iii|ii|i)(°7|°|ø7|maj7|add9|sus4|sus2|m7|7|9|6)?(?:\/(.+))?$/;
+function parseToken(tok){var m=TOK.exec(tok);if(!m)return null;var rn=m[2];return {acc:m[1]==="b"?-1:(m[1]==="#"?1:0),deg:ROM[rn.toUpperCase()],upper:rn===rn.toUpperCase(),suffix:m[3]||"",target:m[4]||null,raw:tok,rn:rn};}
+// contesto = {li,pc} della tonica locale
+function localRoot(tok,ctx){
+  var p=parseToken(tok);if(!p)return null;var base=ctx;
+  if(p.target){var t=localRoot(p.target,ctx);base={li:t.li,pc:t.pc};}
+  return {li:(base.li+p.deg)%7,pc:(((base.pc+BASE[p.deg]+p.acc)%12)+12)%12,p:p};
+}
+var QUAL={ // suffisso del simbolo, intervalli [semitoni, passo di lettera]
+ "":[[0,0],[4,2],[7,4]],"m":[[0,0],[3,2],[7,4]],"dim":[[0,0],[3,2],[6,4]],"7":[[0,0],[4,2],[7,4],[10,6]],"maj7":[[0,0],[4,2],[7,4],[11,6]],
+ "m7":[[0,0],[3,2],[7,4],[10,6]],"dim7":[[0,0],[3,2],[6,4],[9,6]],"m7♭5":[[0,0],[3,2],[6,4],[10,6]],"add9":[[0,0],[4,2],[7,4],[14,1]],
+ "9":[[0,0],[4,2],[7,4],[10,6],[14,1]],"sus4":[[0,0],[5,3],[7,4]],"sus2":[[0,0],[2,1],[7,4]],"6":[[0,0],[4,2],[7,4],[9,5]],
+ "m6":[[0,0],[3,2],[7,4],[9,5]],"m9":[[0,0],[3,2],[7,4],[10,6],[14,1]],"m(add9)":[[0,0],[3,2],[7,4],[14,1]],"m(maj7)":[[0,0],[3,2],[7,4],[11,6]]
+};
+function qualityOf(p){
+  var s=p.suffix,u=p.upper;
+  if(s==="°")return "dim";if(s==="°7")return "dim7";if(s==="ø7")return "m7♭5";
+  if(u){return {"":"","7":"7","maj7":"maj7","9":"9","add9":"add9","sus4":"sus4","sus2":"sus2","6":"6","m7":"m7"}[s]||"";}
+  return {"":"m","7":"m7","maj7":"m(maj7)","9":"m9","add9":"m(add9)","6":"m6","sus4":"sus4","sus2":"sus2","m7":"m7"}[s]||"m";
+}
+// risolve un grado in un accordo concreto
+function chordOf(tok,ctx){
+  var r=localRoot(tok,ctx);if(!r)return null;
+  var q=qualityOf(r.p),root=spell(r.li,r.pc),notes=QUAL[q].map(function(iv){return spell((r.li+iv[1])%7,(r.pc+iv[0])%12);});
+  return {rn:tok,root:root,quality:q,name:root+q,notes:notes,pc:r.pc,li:r.li};
+}
+function keyCtx(k){return {li:k.li,pc:k.pc};}
+function makeKey(name,mode){var n=parseNote(name);return {name:name,mode:mode,li:n.li,pc:n.pc};}
+// funzione armonica
+var FUNC_MAJ={"I":"T","ii":"PD","iii":"T","IV":"PD","V":"D","vi":"T","vii°":"D"};
+var FUNC_MIN={"i":"T","ii°":"PD","bIII":"T","iv":"PD","v":"D","V":"D","bVI":"PD","bVII":"D"};
+function funcOf(tok,mode){
+  var p=parseToken(tok);if(!p||p.target)return "X";
+  var s=(p.acc<0?"b":(p.acc>0?"#":""))+p.rn+(p.suffix==="°"||p.suffix==="°7"||p.suffix==="ø7"?"°":"");
+  var t=(mode==="minor"?FUNC_MIN:FUNC_MAJ)[s];return t||"X";
+}
+function prettyRn(tok){return tok.replace(/b(?=[IVivx])/g,"♭").replace(/#(?=[IVivx])/g,"♯").replace(/ø7/g,"ø7");}
+var LIB={};
+// ===== Dati: emozioni, generi, progressioni =====
+var EMOTIONS=[
+ {id:"nostalgia",name:"Nostalgico / dolce-amaro"},{id:"luce",name:"Luminoso / speranzoso"},{id:"epico",name:"Epico / cinematografico"},
+ {id:"tensione",name:"Teso / inquieto"},{id:"oscuro",name:"Oscuro / minaccioso"},{id:"intimo",name:"Intimo / delicato"},
+ {id:"euforia",name:"Euforico / energico"},{id:"dramma",name:"Drammatico / triste intenso"},{id:"sogno",name:"Sognante / etereo"},
+ {id:"relax",name:"Rilassato / morbido (soul, jazz, lo-fi)"},{id:"mistero",name:"Misterioso / ambiguo"}
+];
+var GENRES=[{id:"pop",name:"Pop"},{id:"rock",name:"Rock e alternative"},{id:"edm",name:"House, techno ed EDM"},{id:"hiphop",name:"Hip-hop e trap"},{id:"lofi",name:"Lo-fi e chill"},{id:"jazz",name:"Jazz"},{id:"folk",name:"Folk e cantautorale"},{id:"cine",name:"Colonne sonore e cinematografico"},{id:"rnb",name:"R&B e soul"},{id:"metal",name:"Metal"}];
+var PROGS=[
+ {id:"M1",mode:"major",rn:["I","V","vi","IV"],emo:["luce","euforia","nostalgia"],gen:["pop","rock","edm","folk"],en:4,why:"Parte dalla tonica, va alla dominante, scende alla relativa minore e passa dalla sottodominante: alterna tensione e rilascio senza chiudere del tutto, per questo regge bene un giro che si ripete."},
+ {id:"M2",mode:"major",rn:["vi","IV","I","V"],emo:["nostalgia","epico","luce"],gen:["pop","rock","edm"],en:3,why:"Iniziare dalla relativa minore dà un colore malinconico che poi si apre nella tonica e termina sulla dominante: l’effetto è un respiro che sale."},
+ {id:"M3",mode:"major",rn:["I","vi","IV","V"],emo:["nostalgia","luce","intimo"],gen:["pop","folk","rnb"],en:2,why:"È il giro «anni Cinquanta»: tutto diatonico, dolce e familiare; la dominante finale riporta alla tonica."},
+ {id:"M4",mode:"major",rn:["I","IV","V","I"],emo:["luce","euforia"],gen:["rock","folk","pop"],en:3,why:"La cadenza più classica: tonica, sottodominante, dominante e risoluzione. Suono diretto e solido, tipico di blues, rock’n’roll e country."},
+ {id:"M5",mode:"major",rn:["I","IV","I","V"],emo:["luce","euforia"],gen:["rock","folk"],en:3,why:"Alterna tonica e sottodominante e poi apre sulla dominante: semplice e ritmico, adatto a strofe e a canzoni da cantare insieme."},
+ {id:"M6",mode:"major",rn:["I","iii","IV","V"],emo:["luce","sogno"],gen:["pop","folk"],en:3,why:"Il basso sale per gradi congiunti (I–iii–IV–V) e dà una sensazione di crescita; il iii porta un colore morbido tra tonica e sottodominante."},
+ {id:"M7",mode:"major",rn:["IV","I","V","vi"],emo:["luce","nostalgia"],gen:["pop","rock"],en:3,why:"Parte dalla sottodominante, che dà apertura, e finisce sulla relativa minore: la chiusura è dolce-amara e invita a ripartire."},
+ {id:"M8",mode:"major",rn:["I","V","vi","iii","IV","I","IV","V"],emo:["nostalgia","intimo","luce"],gen:["pop","cine","folk"],en:2,why:"Il giro del «Canone»: otto accordi con il basso che scende per gradi, dal carattere solenne e romantico; si ripete bene come base di una ballata."},
+ {id:"M9",mode:"major",rn:["IV","V","iii","vi"],emo:["nostalgia","luce","euforia"],gen:["pop"],en:4,why:"Il passaggio V–iii e l’arrivo su vi creano un effetto dolce-amaro molto usato nel pop giapponese: sale in tensione e si risolve sulla relativa minore."},
+ {id:"M10",mode:"major",rn:["I","IV","vi","V"],emo:["luce","nostalgia"],gen:["pop","rock"],en:3,why:"Variante del giro pop con vi prima della dominante: tiene alta l’attesa e prepara la ripartenza."},
+ {id:"M11",mode:"major",rn:["I","bVII","IV","I"],emo:["euforia","luce"],gen:["rock","folk"],en:4,why:"Il bVII, preso in prestito dal modo misolidio, dà un suono aperto e «da rock»; tornare alla tonica passando dalla sottodominante rende il giro circolare."},
+ {id:"M12",mode:"major",rn:["I","IV","iv","I"],emo:["nostalgia","intimo","dramma"],gen:["pop","rock","rnb"],en:2,why:"Il iv minore è un accordo preso in prestito dal modo minore: cambia colore a metà giro e dà un sapore dolce-amaro prima di tornare alla tonica."},
+ {id:"M13",mode:"major",rn:["I","bVI","bVII","I"],emo:["epico","euforia"],gen:["rock","edm","cine"],en:5,why:"Il bVI e il bVII, presi in prestito dal modo minore, danno slancio e trionfo («cadenza epica») prima della risoluzione sulla tonica."},
+ {id:"M14",mode:"major",rn:["I","bIII","IV","I"],emo:["euforia","epico"],gen:["rock"],en:4,why:"Il bIII, preso in prestito, dà un suono potente da rock; il ritorno IV–I è una cadenza plagale."},
+ {id:"M15",mode:"major",rn:["I","vi","ii","V"],emo:["nostalgia","relax"],gen:["pop","jazz","rnb"],en:2,why:"Giro di quinte discendenti (vi–ii–V–I) che parte dalla tonica: scorrevole e ripetibile, tipico del pop vecchio stile e del jazz."},
+ {id:"M16",mode:"major",rn:["I","IV","V","IV"],emo:["euforia"],gen:["rock"],en:4,why:"Il giro «da garage»: tre accordi semplici e martellanti, dove la ripetizione dà energia."},
+ {id:"M17",mode:"major",rn:["I","IV","V","vi"],emo:["nostalgia","dramma","luce"],gen:["pop","folk"],en:3,why:"Dopo la dominante l’orecchio aspetta la tonica, ma arriva vi: la cadenza d’inganno regala una sorpresa dolce-amara."},
+ {id:"M18",mode:"major",rn:["ii7","V7","Imaj7"],emo:["relax","intimo"],gen:["jazz","rnb","lofi"],en:2,why:"La cadenza jazz di base: pre-dominante, dominante e tonica. Le settime rendono il suono morbido e il basso scende per quinte."},
+ {id:"M19",mode:"major",rn:["Imaj7","vi7","ii7","V7"],emo:["relax","nostalgia","intimo"],gen:["jazz","rnb","lofi"],en:2,why:"Il «turnaround» classico: quattro accordi che scendono per quinte e riportano all’inizio senza fermarsi."},
+ {id:"M20",mode:"major",rn:["Imaj7","IVmaj7"],emo:["sogno","relax","luce"],gen:["lofi","rnb","pop"],en:1,why:"Due accordi maggiori con la settima maggiore: l’alternanza tra tonica e sottodominante dà un’oscillazione ariosa e sospesa."},
+ {id:"M21",mode:"major",rn:["Imaj7","iii7","vi7","IVmaj7"],emo:["sogno","relax","nostalgia"],gen:["lofi","rnb"],en:2,why:"Tutti accordi della scala maggiore con settime: il basso sale e poi cade; è un giro morbido e fluttuante, senza dominante forte."},
+ {id:"M22",mode:"major",rn:["I","II"],emo:["sogno","luce","mistero"],gen:["cine","pop"],en:3,why:"Il II maggiore appartiene al modo lidio: dà un’impressione di meraviglia e apertura, senza vera tensione verso la tonica."},
+ {id:"M23",mode:"major",rn:["I","III7","vi","IV"],emo:["dramma","nostalgia","tensione"],gen:["pop","rock","folk"],en:3,why:"Il III7 è la dominante di vi: porta con forza all’accordo relativo minore e dà un tocco drammatico a un giro pop."},
+ {id:"m1",mode:"minor",rn:["i","bVI","bIII","bVII"],emo:["epico","dramma","nostalgia","euforia"],gen:["pop","rock","edm","hiphop","cine"],en:4,why:"Quattro accordi della scala minore naturale con salti ampi: suono epico e malinconico, perfetto per un giro che si ripete."},
+ {id:"m2",mode:"minor",rn:["i","bVII","bVI","V"],emo:["dramma","tensione","mistero"],gen:["rock","cine","folk"],en:4,why:"La cadenza andalusa: il basso scende per gradi e si ferma sulla dominante maggiore, che crea una forte attesa; è il suono del flamenco."},
+ {id:"m3",mode:"minor",rn:["i","iv","V","i"],emo:["dramma","tensione"],gen:["rock","jazz","folk"],en:3,why:"Cadenza minore classica con la dominante maggiore (dalla scala minore armonica), che tira verso la tonica con più forza della v minore."},
+ {id:"m4",mode:"minor",rn:["i","iv","bVII","bIII","bVI","iiø7","V7","i"],emo:["dramma","nostalgia","relax"],gen:["jazz","cine","pop"],en:3,why:"La catena di quinte discendenti in minore: ogni accordo prepara il successivo fino alla cadenza iiø7–V7–i. Ha un carattere autunnale e malinconico."},
+ {id:"m5",mode:"minor",rn:["i","bII"],emo:["oscuro","mistero","tensione"],gen:["metal","cine","edm"],en:4,why:"Il bII (modo frigio) è a un semitono dalla tonica: dà un suono minaccioso ed esotico."},
+ {id:"m6",mode:"minor",rn:["i","bVI","bVII"],emo:["epico","dramma","euforia"],gen:["rock","edm","cine"],en:4,why:"Lo slancio verso la tonica in minore: bVI e bVII crescono e il giro ricomincia."},
+ {id:"m7",mode:"minor",rn:["i7","IV7"],emo:["sogno","mistero","relax","euforia"],gen:["rock","jazz","rnb","lofi"],en:3,why:"Il IV maggiore su una tonica minore viene dal modo dorico: il sesto grado alzato schiarisce il suono e lo rende più «groovy» e meno triste."},
+ {id:"m8",mode:"minor",rn:["iiø7","V7","i"],emo:["dramma","relax"],gen:["jazz"],en:2,why:"La cadenza minore jazz: il ii semidiminuito prepara la dominante, che tira verso la tonica minore."},
+ {id:"m9",mode:"minor",rn:["i","bVII","bVI","bVII"],emo:["epico","mistero","tensione"],gen:["cine","edm","rock"],en:3,why:"Un oscillare tra bVI e bVII intorno alla tonica: suona ampio e in movimento senza mai risolvere del tutto."},
+ {id:"m10",mode:"minor",rn:["i","V"],emo:["tensione","oscuro"],gen:["metal","cine","edm"],en:3,why:"La dominante maggiore sulla tonica minore tiene l’ascoltatore in attesa: suono drammatico e teso."},
+ {id:"m11",mode:"minor",rn:["i","bVI","iv","V"],emo:["dramma","tensione","nostalgia"],gen:["pop","rock"],en:4,why:"Passa da bVI a iv (colore scuro) e chiude sulla dominante maggiore per aumentare l’attesa."},
+ {id:"m12",mode:"minor",rn:["i","iv","i","V"],emo:["tensione","oscuro"],gen:["rock","hiphop"],en:3,why:"Alterna tonica e sottodominante minore e apre sulla dominante: suono cupo e ripetitivo."},
+ {id:"m13",mode:"minor",rn:["i7","iv7"],emo:["intimo","relax","nostalgia"],gen:["rnb","lofi","jazz"],en:2,why:"Due accordi minori con settima: nessuna tensione forte, il colore è morbido e notturno; si può ripetere a lungo."},
+ {id:"m14",mode:"minor",rn:["i","bVII","bIII","bVI"],emo:["epico","nostalgia"],gen:["pop","rock"],en:3,why:"Giro tutto della scala minore naturale; i salti di quarta e di terza lo rendono ampio e cantabile."}
+];
+var VARIANTS={
+ nostalgia:["Per renderla più dolce-amara: sostituisci un IV con iv (accordo preso in prestito dal modo minore).","Per ammorbidire: settime maggiori sugli accordi maggiori e settime minori sui minori."],
+ luce:["Per renderla più luminosa: aggiungi add9 sulla tonica e tieni gli accordi in stato fondamentale.","Per aprire: prima di tornare alla tonica passa da una sospensione (sus4) della dominante."],
+ epico:["Per l’epica: raddoppia la durata di ogni accordo e inserisci un bVI o un bVII verso la tonica.","Per più ampiezza: basso su una nota lunga (pedale) o con la quinta al basso."],
+ tensione:["Per aumentare la tensione: sostituisci V con V7 e fermati sulla dominante invece di risolvere.","Per più inquietudine: aggiungi un accordo diminuito di passaggio prima della dominante."],
+ oscuro:["Per scurire: usa il bII (frigio) o la dominante maggiore sulla tonica minore.","Per più peso: abbassa il registro e tieni il basso su note lunghe."],
+ intimo:["Per renderla intima: voicing stretti, settime e pochi spostamenti tra un accordo e l’altro.","Per ammorbidire: sostituisci il V con un iii o con una dominante sospesa."],
+ euforia:["Per più energia: accorcia il ritmo armonico (un accordo a battuta o a mezza battuta).","Per un picco: aggiungi una dominante secondaria prima del ritornello."],
+ dramma:["Per più dramma: usa la dominante maggiore (V) anche in minore e chiudi con una cadenza d’inganno.","Per più intensità: aggiungi un accordo diminuito di passaggio."],
+ sogno:["Per renderla sognante: settime maggiori, none e sospensioni (sus2 e sus4) senza risolvere subito.","Per più ariosità: evita la dominante forte e preferisci accordi che oscillano (I–IV, I–II)."],
+ relax:["Per renderla morbida: settime e none, ritmo armonico lento.","Per più calore: aggiungi un sostituto di tritono prima di una cadenza."],
+ mistero:["Per più mistero: usa un accordo del modo frigio o dorico (bII o IV sopra una tonica minore).","Per ambiguità: evita la dominante o tienila sospesa."]
+};
+var DIAT_EXT={major:{"I":"Imaj7","ii":"ii7","iii":"iii7","IV":"IVmaj7","V":"V7","vi":"vi7","vii°":"iiø7".replace("ii","vii")},minor:{"i":"i7","ii°":"iiø7","bIII":"bIIImaj7","iv":"iv7","v":"v7","V":"V7","bVI":"bVImaj7","bVII":"bVII7"}};
+function extendTok(tok,mode){var t=DIAT_EXT[mode][tok];return t||tok;}
+function progChords(rn,key,ext){
+  var ctx=keyCtx(key);
+  return rn.map(function(t){var tt=ext?extendTok(t,key.mode):t;var c=chordOf(tt,ctx);c.f=funcOf(t,key.mode);c.rn=tt;return c;});
+}
+// ===== Generatore =====
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function strip(tok){var p=parseToken(tok);if(!p)return tok;return (p.acc<0?"b":(p.acc>0?"#":""))+p.rn+(p.target?"/"+p.target:"");}
+function isDiatonicTarget(tok,mode){var f=funcOf(tok,mode);return f!=="X";}
+function generate(opts){
+  var key=opts.key,mode=key.mode,len=opts.length||4,aud=opts.audacity||0,mods=[];
+  var pool=PROGS.filter(function(p){return p.mode===mode&&(!opts.genre||p.gen.indexOf(opts.genre)>=0);});
+  var note="";if(!pool.length){pool=PROGS.filter(function(p){return p.mode===mode;});note="Pochi esempi per questo genere nel modo scelto: uso tutto il repertorio.";}
+  var avoid=opts.avoid||[];var cands=pool.filter(function(p){return avoid.indexOf(p.id)<0;});if(!cands.length)cands=pool;
+  var base=rnd(cands),rn=base.rn.slice();
+  if(len===8&&rn.length===4){var second=rn.slice();second[3]=(rn[3]==="V"||rn[3]==="V7")?(mode==="minor"?"i":"I"):"V";rn=rn.concat(second);mods.push("seconda metà: l’ultimo accordo diventa "+prettyRn(second[3])+" (domanda e risposta)");}
+  if(len===4&&rn.length===4&&Math.random()<0.35&&aud>=1){var k=1+Math.floor(Math.random()*3);rn=rn.slice(k).concat(rn.slice(0,k));mods.push("giro ruotato: parte dal "+(k+1)+"° accordo");}
+  var n=aud===0?0:(aud===1?1:2),tries=0;
+  while(n>0&&tries<8){tries++;
+    var ops=[];
+    if(mode==="major"){
+      if(rn.indexOf("IV")>=0)ops.push("borrowIV");if(rn.indexOf("vi")>=0)ops.push("borrowvi");if(rn.indexOf("V")>=0&&aud>=2)ops.push("borrowV");
+    }else{ if(rn.indexOf("iv")>=0)ops.push("dorian"); }
+    ops.push("secdom");
+    if(aud>=2&&(rn.indexOf("V7")>=0||rn.indexOf("V")>=0))ops.push("tritone");
+    var op=rnd(ops),done=false,i;
+    if(op==="borrowIV"){i=rn.indexOf("IV");rn[i]="iv";mods.push("prestito modale: IV → iv (colore più scuro)");done=true;}
+    else if(op==="borrowvi"){i=rn.indexOf("vi");rn[i]="bVI";mods.push("prestito modale: vi → ♭VI (più epico)");done=true;}
+    else if(op==="borrowV"){i=rn.indexOf("V");rn[i]="bVII";mods.push("prestito modale: V → ♭VII (suono misolidio, più aperto)");done=true;}
+    else if(op==="dorian"){i=rn.indexOf("iv");rn[i]="IV";mods.push("modo dorico: iv → IV (più luminoso)");done=true;}
+    else if(op==="secdom"){
+      var idx=[];
+      for(i=1;i<rn.length;i++){var tg=strip(rn[i]);if(funcOf(tg,mode)!=="X"&&!(parseToken(tg)&&parseToken(tg).deg===0&&parseToken(tg).acc===0)&&rn[i-1].indexOf("/")<0)idx.push(i);}
+      if(idx.length){i=rnd(idx);var target=strip(rn[i]);rn[i-1]="V7/"+target;mods.push("dominante secondaria: "+prettyRn("V7/"+target)+" prima di "+prettyRn(rn[i])+" (al posto dell’accordo precedente)");done=true;}
+    }else if(op==="tritone"){
+      i=rn.indexOf("V7");if(i<0)i=rn.indexOf("V");
+      if(i>=0){rn[i]="bII7";mods.push("sostituto di tritono: V → ♭II7 (basso che scende di semitono verso la tonica)");done=true;}
+    }
+    if(done)n--;
+  }
+  var chords=progChords(rn,key,!!opts.ext);
+  return {base:base,rn:rn,chords:chords,mods:mods,note:note};
+}
+// ===== Consiglio per emozione =====
+function recommend(opts){
+  var mode=opts.key.mode,em=opts.emotion,target=opts.energy,gen=opts.genre;
+  var list=PROGS.filter(function(p){return p.mode===mode&&p.emo.indexOf(em)>=0;}).map(function(p){
+    var s=3+(p.emo.indexOf(em)===0?1:0)+(gen&&p.gen.indexOf(gen)>=0?1.5:0)-0.6*Math.abs(p.en-target);
+    return {p:p,score:s};
+  }).sort(function(a,b){return b.score-a.score;});
+  return list;
+}
+// ===== Raggiungere un accordo =====
+var APPROACH_GEN={
+ sd:{pop:3,rock:2,folk:3,jazz:2,rnb:2,lofi:1,cine:2,edm:1,hiphop:0,metal:1},
+ iiV:{jazz:3,rnb:3,lofi:3,pop:1,cine:1,folk:0,rock:0,edm:0,hiphop:0,metal:0},
+ trit:{jazz:3,rnb:2,lofi:2,pop:0,cine:1,folk:0,rock:0,edm:0,hiphop:0,metal:0},
+ dim:{jazz:2,cine:3,folk:1,rnb:2,pop:1,rock:0,edm:0,hiphop:0,lofi:1,metal:1},
+ chrom:{edm:2,hiphop:1,rnb:2,jazz:2,cine:1,rock:1,pop:1,lofi:1,folk:0,metal:1},
+ plagal:{folk:3,pop:2,rock:2,rnb:3,cine:1,jazz:0,lofi:1,edm:0,hiphop:0,metal:0},
+ backdoor:{jazz:3,rnb:2,lofi:2,pop:0,cine:1,folk:0,rock:1,edm:0,hiphop:0,metal:0},
+ minorIV:{pop:3,rock:2,rnb:2,folk:2,cine:2,jazz:1,lofi:2,edm:1,hiphop:0,metal:0},
+ sus:{pop:3,folk:3,rock:2,rnb:2,lofi:2,cine:2,edm:2,jazz:1,hiphop:0,metal:0},
+ chain:{jazz:3,rnb:2,pop:1,folk:1,lofi:1,cine:1,rock:0,edm:0,hiphop:0,metal:0},
+ dec:{pop:3,folk:2,cine:3,rock:1,rnb:2,jazz:2,lofi:1,edm:1,hiphop:0,metal:1}
+};
+function approaches(target,key){
+  var tg=strip(target),p=parseToken(tg),minor=p&&!p.upper,isTonic=p&&p.deg===0&&p.acc===0,out=[];
+  function add(id,title,how,seq,effect){out.push({id:id,title:title,how:how,chords:seq.map(function(t){var c=chordOf(t,keyCtx(key));c.f=funcOf(t,key.mode);return c;}),effect:effect});}
+  add("sd","Dominante secondaria","Un accordo dominante (con la settima) costruito sulla quinta dell’accordo di arrivo: crea una spinta verso di esso.",["V7/"+tg,tg],"Spinta forte e brillante: l’accordo di arrivo suona «importante». È il modo più universale.");
+  add("iiV","ii–V verso l’accordo","Un ii–V completo che punta all’accordo di arrivo, come una piccola cadenza jazz.",[minor?"iiø7/"+tg:"ii7/"+tg,"V7/"+tg,tg],"Scorrevole ed elegante; il basso scende per quinte. Molto usato nel jazz, nel soul e nel lo-fi.");
+  add("trit","Sostituto di tritono","Al posto della dominante si usa il suo sostituto, un accordo di settima a un semitono sopra l’accordo di arrivo.",["bII7/"+tg,tg],"Il basso scende di semitono: suono scuro e «jazzy», meno prevedibile della dominante.");
+  add("dim","Accordo diminuito di passaggio","Un accordo di settima diminuita sul semitono sotto l’accordo di arrivo.",["vii°7/"+tg,tg],"Tensione drammatica che si scioglie subito: molto usato in gospel, classica, jazz e colonne sonore.");
+  add("chrom","Approccio cromatico","Un accordo dello stesso tipo a un semitono sopra l’accordo di arrivo, che «scivola» su di esso.",[(minor?"bii/":"bII/")+tg,tg],"Effetto di scivolata, funk e gospel; nell’elettronica dà energia senza cambiare funzione armonica.");
+  add("chain","Catena di dominanti","Due dominanti di fila, ognuna che punta alla successiva, fino all’accordo di arrivo.",["V7/V7/"+tg,"V7/"+tg,tg],"Sensazione di spirale che accelera verso l’arrivo; tipica di ragtime, jazz e canzone d’autore.");
+  add("sus","Dominante sospesa","La dominante dell’accordo di arrivo, prima con la quarta sospesa (sus4) e poi risolta.",["Vsus4/"+tg,"V7/"+tg,tg],"Attesa che si prolunga e poi si scioglie: molto usata nel pop e nella ballata.");
+  if(isTonic&&!minor){
+    add("plagal","Cadenza plagale","La sottodominante porta alla tonica, senza dominante.",["IV",tg],"Suono morbido, «amen» da gospel e folk: chiude senza spinta.");
+    add("minorIV","Sottodominante minore","Il iv minore, preso in prestito dal modo minore, prima della tonica.",["iv",tg],"Dolce-amaro: un’ombra che si scioglie nella tonica luminosa.");
+    add("backdoor","Porta di servizio (♭VII7 → I)","Il ♭VII7 porta alla tonica dall’alto, senza passare dalla dominante.",["bVII7",tg],"Risoluzione morbida e inaspettata, di origine jazz e soul.");
+  }
+  if(isTonic&&minor){
+    add("plagal","Cadenza plagale in minore","Il iv minore porta alla tonica minore.",["iv",tg],"Suono scuro e raccolto; chiude la frase senza tensione forte.");
+    add("backdoor","Porta di servizio (♭VII7 → i)","Il ♭VII7 porta alla tonica minore dall’alto.",["bVII7",tg],"Risoluzione morbida e un po’ misteriosa.");
+  }
+  if(p&&(tg==="vi"||tg==="bVI")){
+    add("dec","Cadenza d’inganno","Dopo la dominante, invece della tonica si arriva a questo accordo.",["V7",tg],"Sorpresa dolce-amara: l’orecchio aspettava la tonica.");
+  }
+  return out;
+}
+function bestApproach(list,genre){
+  var best=null;list.forEach(function(a){var s=genre?(APPROACH_GEN[a.id]||{})[genre]||0:(a.id==="sd"?3:(a.id==="sus"?2:1));a.score=s;if(!best||s>best.score)best=a;});return best;
+}
+// ===== Cambio di tonalità =====
+function diatonic(key){
+  var ctx=keyCtx(key),out=[],defs;
+  if(key.mode==="major")defs=[["I",0,"M"],["ii",1,"m"],["iii",2,"m"],["IV",3,"M"],["V",4,"M"],["vi",5,"m"],["vii°",6,"dim"]];
+  else defs=[["i",0,"m"],["ii°",1,"dim"],["bIII",2,"M"],["iv",3,"m"],["v",4,"m"],["bVI",5,"M"],["bVII",6,"M"],["V",4,"M"],["vii°",6,"dim"]];
+  defs.forEach(function(d){
+    var tok=d[0],pc,li;
+    if(key.mode==="major"){pc=(key.pc+BASE[d[1]])%12;li=(key.li+d[1])%7;}
+    else{var off={"i":0,"ii°":2,"bIII":3,"iv":5,"v":7,"bVI":8,"bVII":10,"V":7,"vii°":11}[tok];pc=(key.pc+off)%12;li=(key.li+d[1])%7;}
+    out.push({rn:tok,pc:pc,li:li,q:d[2],name:spell(li,pc)+(d[2]==="M"?"":(d[2]==="m"?"m":"dim"))});
+  });
+  return out;
+}
+function keyPos(k){var maj=k.mode==="major"?k.pc:(k.pc+3)%12;return (maj*7)%12;}
+function fifthsDist(a,b){var d=Math.abs(keyPos(a)-keyPos(b))%12;return Math.min(d,12-d);}
+var INTERVALS={0:"sulla stessa tonica",1:"un semitono sopra",2:"un tono sopra",3:"una terza minore sopra",4:"una terza maggiore sopra",5:"una quarta sopra",6:"un tritono sopra",7:"una quinta sopra",8:"una sesta minore sopra (cioè una terza maggiore sotto)",9:"una sesta maggiore sopra (cioè una terza minore sotto)",10:"un tono sotto",11:"un semitono sotto"};
+function relation(a,b){
+  var d=fifthsDist(a,b),same=a.pc===b.pc;
+  if(same&&a.mode!==b.mode)return {d:d,label:"tonalità omonima (stessa tonica, modo opposto)"};
+  if(a.mode!==b.mode&&d===0)return {d:d,label:"tonalità relativa (stesse note, tonica diversa)"};
+  if(a.mode===b.mode&&a.pc===b.pc)return {d:0,label:"è la stessa tonalità"};
+  return {d:d,label:d===1?"tonalità vicina (differisce per una sola alterazione)":(d===2?"tonalità abbastanza vicina":(d===3?"tonalità a distanza media":"tonalità lontana"))};
+}
+var MOD_GEN={
+ pivot:{folk:3,rock:2,pop:2,jazz:2,lofi:2,rnb:2,cine:1,edm:0,hiphop:1,metal:1},
+ direct:{rock:2,pop:1.5,edm:2,hiphop:2,metal:2,cine:1.5,folk:1,jazz:1,lofi:1,rnb:1},
+ iiV:{jazz:3,lofi:3,rnb:2.5,pop:1,folk:0.5,rock:0.5,cine:1,edm:0,hiphop:0.5,metal:0},
+ truck:{pop:3,edm:3,rnb:2.5,rock:1.5,folk:1,hiphop:1,cine:0.5,jazz:0,lofi:0,metal:1},
+ mediant:{cine:3,metal:1.5,edm:1.5,pop:1,rock:1,rnb:1,folk:0.5,jazz:1,lofi:1,hiphop:1},
+ dim:{cine:2,jazz:2,rnb:2,folk:1,pop:1,rock:1,edm:0.5,hiphop:0,lofi:1,metal:2},
+ parallel:{pop:2,rock:2,cine:2,folk:2,rnb:2,jazz:1,lofi:1,edm:1.5,hiphop:1,metal:2}
+};
+function modulation(from,to,genre){
+  var up=(to.pc-from.pc+12)%12,rel=relation(from,to),fc=keyCtx(from),tc=keyCtx(to),res={up:up,rel:rel,pivots:[],methods:[]};
+  var D1=diatonic(from),D2=diatonic(to);
+  var PDn=["ii","ii°","IV","iv","bVI"];
+  D1.forEach(function(a){D2.forEach(function(b){if(a.pc===b.pc&&a.q===b.q&&!res.pivots.some(function(x){return x.name===a.name;}))res.pivots.push({name:a.name,rnOld:a.rn,rnNew:b.rn,pd:PDn.indexOf(b.rn)>=0,isTonicNew:(b.rn==="I"||b.rn==="i")});});});
+  res.pivots.sort(function(a,b){return (b.pd-a.pd)||((a.isTonicNew?1:0)-(b.isTonicNew?1:0));});
+  var tI=to.mode==="major"?"I":"i",fI=from.mode==="major"?"I":"i";
+  var fromI=chordOf(fI,fc).name,toI=chordOf(tI,tc).name,toV7=chordOf("V7",tc).name,toIV=chordOf(to.mode==="major"?"IV":"iv",tc).name,toiim=chordOf(to.mode==="major"?"ii7":"iiø7",tc).name;
+  var M=[];
+  function m(id,title,how,seq,effect,apply){M.push({id:id,title:title,how:how,seq:seq,effect:effect,applicable:apply!==false});}
+  if(res.pivots.length){
+    var pv=res.pivots[0],seq=[fromI,pv.name];
+    if(!pv.pd&&!pv.isTonicNew)seq.push(toIV);
+    seq.push(toV7,toI);
+    m("pivot","Accordo pivot","Si usa un accordo che esiste in entrambe le tonalità: cambia funzione senza che l’orecchio se ne accorga. Qui "+pv.name+" è "+prettyRn(pv.rnOld)+" nella tonalità di partenza e "+prettyRn(pv.rnNew)+" in quella di arrivo.",seq,"Passaggio morbido e naturale; è il modo più «invisibile» di cambiare tonalità.");
+  }
+  m("direct","Dominante diretta","Si salta direttamente alla dominante (con la settima) della nuova tonalità e poi alla nuova tonica.",[fromI,toV7,toI],"Netto e chiaro: l’orecchio capisce subito dove si va. Funziona meglio se il basso si muove di poco.");
+  m("iiV","ii–V–I nella nuova tonalità","Si costruisce una cadenza completa nella tonalità di arrivo.",[fromI,toiim,toV7,toI],"Elegante e fluido; tipico del jazz e del soul.");
+  m("truck","Cambio diretto verso l’alto («ultimo ritornello»)","L’ultimo ritornello riparte un semitono o un tono sopra, spesso senza preparazione o dopo la dominante nuova.",[fromI,toV7,toI],"Dà una spinta di energia e festa; classico di pop, gospel ed elettronica.",(up===1||up===2)&&from.mode===to.mode);
+  // mediante cromatica
+  if(from.mode===to.mode&&[3,4,8,9].indexOf(up)>=0){
+    var a=chordOf(fI,fc).notes,b=chordOf(tI,tc).notes,common=a.filter(function(x){return b.indexOf(x)>=0;});
+    m("mediant","Slittamento per terza (mediante cromatica)","Dalla tonica di partenza si salta alla tonica nuova, a distanza di terza: le due triadi condividono "+(common.length?"la nota "+common.join(", "):"una nota")+".",[fromI,toI],"Effetto magico e «cinematografico», senza passare dalla dominante.");
+  }
+  m("dim","Accordo di settima diminuita","Si usa la settima diminuita sulla sensibile (il semitono sotto) della nuova tonica, che si risolve subito sulla tonica.",[fromI,chordOf("vii°7",tc).name,toI],"Tensione drammatica e risoluzione decisa; la stessa settima diminuita può portare in quattro tonalità diverse.");
+  if(from.pc===to.pc&&from.mode!==to.mode){
+    var seq2=from.mode==="major"?[fromI,chordOf("IV",fc).name,chordOf("iv",fc).name,toI]:[fromI,chordOf("iv",fc).name,chordOf("IV",fc).name,toI];
+    m("parallel","Prestito modale","Si cambia modo sulla stessa tonica usando accordi presi in prestito dall’altro modo prima di arrivare alla nuova tonica.",seq2,"Il colore cambia gradualmente, da luminoso a scuro o viceversa; molto efficace in pop, rock e colonne sonore.");
+  }
+  // classifica
+  M.forEach(function(x){
+    var g=genre?((MOD_GEN[x.id]||{})[genre]||0):0;
+    if(!genre)g={pivot:3,direct:2,iiV:1.5,truck:2.5,mediant:1.5,dim:1,parallel:3}[x.id]||0;
+    var bonus=0;if(x.id==="pivot"&&rel.d<=2)bonus=1;if(x.id==="truck"&&x.applicable)bonus=0.5;
+    x.score=x.applicable?g+bonus:-1;
+  });
+  M.sort(function(a,b){return b.score-a.score;});
+  res.methods=M.filter(function(x){return x.applicable;});
+  return res;
+}
+(function(){
+"use strict";
+var S={key:makeKey("C","major"),it:false,genre:"",ext:false,notes:false,seen:[]};
+var KMAJ=["C","D♭","D","E♭","E","F","F♯","G","A♭","A","B♭","B"],KMIN=["C","C♯","D","E♭","E","F","F♯","G","G♯","A","B♭","B"];
+var FN={T:"tonica",PD:"pre-dominante",D:"dominante",X:"colore"};
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function disp(n){return S.it?itName(n):n;}
+function keyLabel(n,m){return disp(n)+(m==="major"?" maggiore":" minore");}
+function fillKeys(sel,cur){
+  var h='<optgroup label="Maggiori">'+KMAJ.map(function(n){return '<option value="'+n+':major">'+keyLabel(n,"major")+'</option>';}).join("")+'</optgroup><optgroup label="Minori">'+KMIN.map(function(n){return '<option value="'+n+':minor">'+keyLabel(n,"minor")+'</option>';}).join("")+'</optgroup>';
+  sel.innerHTML=h;if(cur)sel.value=cur;
+}
+function keyOf(v){var p=v.split(":");return makeKey(p[0],p[1]);}
+function chip(c){
+  var f=c.f||"X";
+  return '<div class="chip f'+f+'"><span class="rn">'+esc(prettyRn(c.rn))+'</span><span class="nm">'+esc(disp(c.name))+'</span>'+(S.notes&&c.notes?'<span class="nt">'+esc(c.notes.map(disp).join(" "))+'</span>':'')+'<span class="fn">'+FN[f]+'</span></div>';
+}
+function chipName(n,lab){return '<div class="chip fX plain"><span class="nm">'+esc(disp(n))+'</span>'+(lab?'<span class="fn">'+esc(lab)+'</span>':'')+'</div>';}
+function row(chs){return '<div class="chips" role="list">'+chs.join('<span class="arr" aria-hidden="true">›</span>')+'</div>';}
+function textOf(chords){return chords.map(function(c){return prettyRn(c.rn);}).join(" – ")+"\n"+chords.map(function(c){return disp(c.name);}).join(" – ");}
+var copyId=0,copyStore={};
+function copyBtn(t){var id="c"+(++copyId);copyStore[id]=t;return '<button class="copy" data-copy="'+id+'">Copia</button>';}
+function card(title,badge,body,copy,midi){
+  var foot=(copy||midi)?'<div class="foot">'+(midi?midiBtns(midi):'')+(copy?copyBtn(copy):'')+(midi?'<span class="scan" data-scan="'+midi._id+'">'+esc(midiLabel(midi).scan)+'</span>':'')+'</div>':'';
+  return '<article class="pcard"><header><h3>'+title+'</h3>'+(badge?'<span class="tag '+badge[0]+'">'+esc(badge[1])+'</span>':'')+'</header>'+body+foot+'</article>';
+}
+
+/* =====================================================================================
+   ESPORTAZIONE MIDI (Standard MIDI File, formato 0, 480 PPQ) E ANTEPRIMA AUDIO (Web Audio)
+   ===================================================================================== */
+var PPQ=480,BAR_TICKS=PPQ*4,GAP_TICKS=10,MIDI_STORE={},midiId=0;
+function loopBars(){return $("loopBars").value==="8"?8:4;}
+function bpmVal(){var v=parseFloat($("bpm").value);return isFinite(v)?Math.max(40,Math.min(240,Math.round(v))):120;}
+function checkBpm(){var v=parseFloat($("bpm").value),ok=isFinite(v)&&v>=40&&v<=240;$("bpm").setAttribute("aria-invalid",ok?"false":"true");$("bpmMsg").textContent=ok?"":"BPM tra 40 e 240: uso "+bpmVal()+".";}
+// Ritmo armonico su 4 o 8 battute di 4/4, in movimenti (semiminime).
+// - N divide le battute: durata identica per tutti (4 su 4 = 1 battuta; 4 su 8 = 2; 2 su 4 = 2; 8 su 8 = 1).
+// - 3 accordi: fraseggio binario 1 + 1 + 2 (2 + 2 + 4 su 8): l'accordo di risoluzione chiude l'iperbattuta.
+// - Più accordi che battute ma divisibili per i movimenti: durata identica in movimenti (8 su 4 = mezza battuta).
+// - Altri casi: battute (o movimenti) intere a tutti, il resto all'ultimo accordo, per chiudere esattamente il loop.
+function planBeats(n,bars){
+  var total=bars*4,out=[],i;
+  if(n<=0)return out;
+  if(n===1)return [total];
+  if(n===3)return bars===8?[8,8,16]:[4,4,8];
+  if(bars%n===0){for(i=0;i<n;i++)out.push(bars/n*4);return out;}
+  if(total%n===0){for(i=0;i<n;i++)out.push(total/n);return out;}
+  var unit=n<=bars?4:1,base=Math.max(1,Math.floor(total/unit/n))*unit;
+  for(i=0;i<n;i++)out.push(base);out[n-1]+=total-base*n;
+  return out;
+}
+function planText(beats){
+  if(beats.every(function(b){return b%4===0;}))return beats.map(function(b){return String(b/4);}).join(" + ")+" batt.";
+  return beats.map(function(b){return String(b);}).join(" + ")+" movimenti";
+}
+// Nome esteso (sezione «Cambiare tonalità») → {pc, quality}: radice con alterazioni e suffisso di QUAL
+function parseChordName(name){
+  var m=/^([A-G])((?:♯|♭|#|b(?![a-z]))*)(.*)$/.exec(String(name).trim());if(!m)return {pc:0,quality:"",name:String(name)};
+  var n=parseNote(m[1]+m[2]),q=m[3];if(!QUAL[q])q=/^m/.test(q)&&!/^maj/.test(q)?"m":"";
+  return {pc:n.pc,quality:q,name:String(name)};
+}
+// Voicing: fondamentale al basso in ottava 3 (MIDI 48–59) + voci strette tra 55 e 79, scelte tra i rivolti
+// per restare vicine all'accordo precedente (niente salti d'ottava bruschi). Restituisce anche l'altezza media.
+function voicing(c,prevAvg){
+  var q=QUAL[c.quality]||QUAL[""],pcs=[];q.forEach(function(iv){var p=(c.pc+iv[0])%12;if(pcs.indexOf(p)<0)pcs.push(p);});
+  var bass=48+c.pc,lo=Math.max(55,bass+1),target=prevAvg||66,best=null;
+  for(var s=0;s<pcs.length;s++){
+    var ord=pcs.slice().sort(function(a,b){return ((a-pcs[s]+12)%12)-((b-pcs[s]+12)%12);});
+    for(var oct=0;oct<2;oct++){
+      var n0=lo+((ord[0]-lo)%12+12)%12+oct*12,notes=[n0];
+      for(var k=1;k<ord.length;k++){var d=(ord[k]-ord[k-1]+12)%12;notes.push(notes[k-1]+(d||12));}
+      if(notes[notes.length-1]>79)continue;
+      var avg=notes.reduce(function(a,b){return a+b;},0)/notes.length,sc=Math.abs(avg-target);
+      if(!best||sc<best.sc)best={sc:sc,notes:notes,avg:avg};
+    }
+  }
+  if(!best){var n=[];pcs.forEach(function(p){n.push(60+((p-60)%12+12)%12);});n.sort(function(a,b){return a-b;});best={notes:n,avg:66};}
+  return {bass:bass,upper:best.notes,notes:[bass].concat(best.notes),avg:best.avg};
+}
+function vlq(n){var b=[n&0x7F];n>>=7;while(n>0){b.unshift((n&0x7F)|0x80);n>>=7;}return b;}
+function asciiOf(s){return String(s).replace(/♯/g,"#").replace(/♭/g,"b").replace(/[^\x20-\x7E]/g,"");}
+// SMF formato 0: MThd (formato 0, 1 traccia, 480 PPQ) + MTrk con nome, tempo, metro 4/4, programma, note, fine traccia
+function buildMidi(chords,bars,bpm,title){
+  var beats=planBeats(chords.length,bars),ev=[],t=0,prev=null;
+  chords.forEach(function(c,i){
+    var dur=beats[i]*PPQ,v=voicing(c,prev),off=t+dur-GAP_TICKS;prev=v.avg;
+    v.notes.forEach(function(n,j){ev.push({t:t,o:1,b:[0x90,n,j===0?88:76]});ev.push({t:off,o:0,b:[0x80,n,64]});});
+    t+=dur;
+  });
+  ev.sort(function(a,b){return a.t-b.t||a.o-b.o;});
+  var tr=[],name=asciiOf(title||"ToneBench").slice(0,120),us=Math.round(60000000/bpm);
+  tr.push(0,0xFF,0x03);tr=tr.concat(vlq(name.length));for(var i=0;i<name.length;i++)tr.push(name.charCodeAt(i));
+  tr.push(0,0xFF,0x51,0x03,(us>>16)&0xFF,(us>>8)&0xFF,us&0xFF);
+  tr.push(0,0xFF,0x58,0x04,0x04,0x02,0x18,0x08);
+  tr.push(0,0xC0,0x00);
+  var last=0;ev.forEach(function(e){tr=tr.concat(vlq(e.t-last),e.b);last=e.t;});
+  var total=bars*BAR_TICKS;tr=tr.concat(vlq(Math.max(0,total-last)),[0xFF,0x2F,0x00]);
+  var head=[0x4D,0x54,0x68,0x64,0,0,0,6,0,0,0,1,(PPQ>>8)&0xFF,PPQ&0xFF],len=tr.length;
+  var out=new Uint8Array(head.length+8+len),p=0;
+  head.forEach(function(x){out[p++]=x;});[0x4D,0x54,0x72,0x6B,(len>>>24)&0xFF,(len>>>16)&0xFF,(len>>>8)&0xFF,len&0xFF].forEach(function(x){out[p++]=x;});
+  tr.forEach(function(x){out[p++]=x;});
+  return out;
+}
+function cleanTok(s){return String(s).replace(/♯/g,"#").replace(/♭/g,"b").replace(/°/g,"dim").replace(/ø/g,"hdim").replace(/\//g,"of").replace(/[^A-Za-z0-9#+]/g,"");}
+function keyTag(k){return cleanTok(k.name)+"-"+(k.mode==="major"?"maj":"min");}
+function midiName(m,bars){
+  var lab=m.label.map(cleanTok).filter(Boolean).join("-").slice(0,60)||"giro";
+  return "ToneBench_"+keyTag(m.key)+(m.to?"-to-"+keyTag(m.to):"")+"_"+lab+"_"+bars+"bar.mid";
+}
+function midiLabel(m){var bars=loopBars();return {btn:"Scarica MIDI · "+bars+" batt.",scan:"Scansione: "+planText(planBeats(m.chords.length,bars))};}
+function midiBtns(m){
+  var id="m"+(++midiId);m._id=id;MIDI_STORE[id]=m;var L=midiLabel(m);
+  return '<button class="act act-play" type="button" data-play="'+id+'" aria-pressed="false" aria-label="Ascolta la progressione">▶ Ascolta</button>'+
+    '<button class="act act-midi" type="button" data-midi="'+id+'" title="'+esc(midiName(m,loopBars()))+'">'+esc(L.btn)+'</button>';
+}
+function relabel(){
+  $$("[data-midi]").forEach(function(b){var m=MIDI_STORE[b.getAttribute("data-midi")];if(!m)return;b.textContent=midiLabel(m).btn;b.title=midiName(m,loopBars());});
+  $$("[data-scan]").forEach(function(s){var m=MIDI_STORE[s.getAttribute("data-scan")];if(m)s.textContent=midiLabel(m).scan;});
+}
+function $$(sel){return Array.prototype.slice.call(document.querySelectorAll(sel));}
+function downloadMidi(id){
+  var m=MIDI_STORE[id];if(!m||!m.chords.length)return;
+  var bars=loopBars(),name=midiName(m,bars),data=buildMidi(m.chords,bars,bpmVal(),name.replace(/\.mid$/,""));
+  var url=URL.createObjectURL(new Blob([data],{type:"audio/midi"})),a=document.createElement("a");
+  a.href=url;a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(function(){try{URL.revokeObjectURL(url);}catch(e){}if(a.parentNode)a.parentNode.removeChild(a);},1000);
+}
+/* ---------- anteprima: un solo AudioContext, synth polifonico morbido (triangolo + sinusoide → passa-basso, ADSR) ---------- */
+var AC=null,PLAY={id:null,master:null,oscs:[],timer:null};
+function actx(){
+  if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{AC=new C();}catch(e){return null;}}
+  if(AC.state==="suspended"&&AC.resume)AC.resume();
+  return AC;
+}
+function playButtons(){$$("[data-play]").forEach(function(b){var on=b.getAttribute("data-play")===PLAY.id;b.textContent=on?"■ Stop":"▶ Ascolta";b.setAttribute("aria-pressed",on?"true":"false");b.classList.toggle("is-on",on);});}
+function stopPreview(){
+  clearTimeout(PLAY.timer);
+  if(PLAY.master&&AC){
+    var m=PLAY.master,os=PLAY.oscs,t=AC.currentTime;
+    try{m.gain.cancelScheduledValues(t);m.gain.setValueAtTime(m.gain.value,t);m.gain.linearRampToValueAtTime(0,t+0.04);}catch(e){}
+    setTimeout(function(){os.forEach(function(o){try{o.stop();}catch(e){}});try{m.disconnect();}catch(e){}},90);
+  }
+  PLAY={id:null,master:null,oscs:[],timer:null};playButtons();
+}
+function startPreview(id){
+  var m=MIDI_STORE[id],ctx=actx();if(!m||!ctx)return;
+  stopPreview();
+  var bars=loopBars(),beats=planBeats(m.chords.length,bars),spb=60/bpmVal(),t=ctx.currentTime+0.06,prev=null,oscs=[];
+  var master=ctx.createGain();master.gain.value=0.8;
+  var lp=ctx.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2000;lp.Q.value=0.4;
+  lp.connect(master);master.connect(ctx.destination);
+  m.chords.forEach(function(c,i){
+    var d=beats[i]*spb,v=voicing(c,prev),end=t+d*0.98,rel=Math.min(0.4,d*0.25),k=1/Math.sqrt(v.notes.length);prev=v.avg;
+    v.notes.forEach(function(n,j){
+      var f=440*Math.pow(2,(n-69)/12),g=ctx.createGain(),pk=(j===0?0.22:0.15)*k,sus=pk*0.6,att=0.025,dec=Math.min(0.35,d*0.3);
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(pk,t+att);g.gain.linearRampToValueAtTime(sus,t+att+dec);
+      g.gain.setValueAtTime(sus,end);g.gain.linearRampToValueAtTime(0,end+rel);
+      g.connect(lp);
+      [["triangle",0],["sine",4]].forEach(function(o){var osc=ctx.createOscillator();osc.type=o[0];osc.frequency.value=f;osc.detune.value=o[1];osc.connect(g);osc.start(t);osc.stop(end+rel+0.05);oscs.push(osc);});
+    });
+    t+=d;
+  });
+  PLAY={id:id,master:master,oscs:oscs,timer:setTimeout(function(){if(PLAY.id===id){try{master.disconnect();}catch(e){}PLAY={id:null,master:null,oscs:[],timer:null};playButtons();}},(t-ctx.currentTime)*1000+500)};
+  playButtons();
+}
+/* ---------- tema condiviso con le altre pagine di ToneBench (chiave qc_theme) ---------- */
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme",t);
+  try{localStorage.setItem("qc_theme",t);}catch(e){}
+  var b=$("themeBtn");if(b){b.setAttribute("aria-pressed",t==="light"?"true":"false");b.title="Tema attuale: "+(t==="light"?"chiaro":"scuro")+" (premi per alternare)";}
+}
+function loadTheme(){try{var t=localStorage.getItem("qc_theme");if(t==="light"||t==="dark")return t;}catch(e){}return "dark";}
+/* ---------- Genera ---------- */
+function doGenerate(){
+  var len=parseInt($("len").value,10),aud=parseInt($("aud").value,10),out=[],ids=[];
+  for(var i=0;i<6;i++){
+    var r=generate({key:S.key,genre:S.genre||null,length:len,audacity:aud,ext:S.ext,avoid:ids});
+    ids.push(r.base.id);
+    var body=row(r.chords.map(chip))+'<p class="line"><strong>In gradi:</strong> '+esc(r.chords.map(function(c){return prettyRn(c.rn);}).join(" – "))+'</p><p class="line"><strong>Accordi:</strong> '+esc(r.chords.map(function(c){return disp(c.name);}).join(" – "))+'</p>'+
+      '<p class="why">'+esc(r.base.why)+'</p>'+(r.mods.length?'<ul class="mods">'+r.mods.map(function(m){return '<li>'+esc(m)+'</li>';}).join("")+'</ul>':'')+(r.note?'<p class="muted small">'+esc(r.note)+'</p>':'');
+    out.push(card("Base: "+esc(r.base.rn.map(prettyRn).join("–")),null,body,textOf(r.chords),{chords:r.chords,label:r.chords.map(function(c){return c.rn;}),key:S.key}));
+  }
+  $("genOut").innerHTML=out.join("");
+}
+/* ---------- Per emozione ---------- */
+function doRecommend(){
+  var em=$("emo").value,en=parseInt($("energy").value,10);
+  var list=recommend({key:S.key,emotion:em,energy:en,genre:S.genre||null}).slice(0,6);
+  var box=$("emoOut");
+  if(!list.length){box.innerHTML='<p class="empty">Per questa emozione non ho progressioni nel modo '+(S.key.mode==="major"?"maggiore":"minore")+'. Prova a cambiare tonalità scegliendone una '+(S.key.mode==="major"?"minore":"maggiore")+'.</p>';return;}
+  var h=list.map(function(x,i){
+    var chords=progChords(x.p.rn,S.key,S.ext);
+    var body=row(chords.map(chip))+'<p class="line"><strong>In gradi:</strong> '+esc(chords.map(function(c){return prettyRn(c.rn);}).join(" – "))+'</p><p class="line"><strong>Accordi:</strong> '+esc(chords.map(function(c){return disp(c.name);}).join(" – "))+'</p><p class="why">'+esc(x.p.why)+'</p><p class="muted small">Energia tipica: '+x.p.en+' su 5 · generi dove si usa spesso: '+x.p.gen.map(function(g){return GENRES.filter(function(q){return q.id===g;})[0].name;}).join(", ")+'.</p>';
+    return card(esc(x.p.rn.map(prettyRn).join("–")),i===0?["best","La più adatta"]:null,body,textOf(chords),{chords:chords,label:chords.map(function(c){return c.rn;}),key:S.key});
+  }).join("");
+  h+='<div class="tips"><h3>Per spostarla verso l’emozione scelta</h3><ul>'+VARIANTS[em].map(function(t){return '<li>'+esc(t)+'</li>';}).join("")+'</ul><p class="muted small">Sono tendenze comuni, non regole: l’effetto dipende anche da ritmo, voicing, melodia e timbro.</p></div>';
+  box.innerHTML=h;
+}
+/* ---------- Raggiungere un accordo ---------- */
+var TARGETS={major:["I","ii","iii","IV","V","vi","bVII","bVI","bIII"],minor:["i","bIII","iv","v","V","bVI","bVII"]};
+function fillTargets(){
+  var sel=$("tgt"),cur=sel.value,ctx=keyCtx(S.key);
+  sel.innerHTML=TARGETS[S.key.mode].map(function(t){var c=chordOf(t,ctx);return '<option value="'+t+'">'+esc(prettyRn(t))+' · '+esc(disp(c.name))+'</option>';}).join("");
+  if(cur&&TARGETS[S.key.mode].indexOf(cur)>=0)sel.value=cur;
+}
+function doApproach(){
+  var t=$("tgt").value,list=approaches(t,S.key),best=bestApproach(list,S.genre||null);
+  var order=list.slice().sort(function(a,b){return (b===best)-(a===best)||b.score-a.score;});
+  $("apOut").innerHTML=order.map(function(a){
+    var genres=Object.keys(APPROACH_GEN[a.id]).filter(function(g){return APPROACH_GEN[a.id][g]>=2;}).map(function(g){return GENRES.filter(function(q){return q.id===g;})[0].name;});
+    var body='<p class="how">'+esc(a.how)+'</p>'+row(a.chords.map(chip))+'<p class="line"><strong>Accordi:</strong> '+esc(a.chords.map(function(c){return disp(c.name);}).join(" – "))+'</p><p class="why">'+esc(a.effect)+'</p>'+(genres.length?'<p class="muted small">Si sente spesso in: '+esc(genres.join(", "))+'.</p>':'');
+    return card(esc(a.title),a===best?["best",S.genre?"Consigliato per il genere":"Il più universale"]:["alt","Alternativa"],body,textOf(a.chords),{chords:a.chords,label:a.chords.map(function(c){return c.rn;}),key:S.key});
+  }).join("");
+}
+/* ---------- Cambiare tonalità ---------- */
+function doModulate(){
+  var to=keyOf($("toKey").value),m=modulation(S.key,to,S.genre||null),ctx={from:S.key,to:to};
+  var h='<div class="summary"><p><strong>Da '+esc(keyLabel(S.key.name,S.key.mode))+' a '+esc(keyLabel(to.name,to.mode))+'</strong></p><p>Relazione: '+esc(m.rel.label)+'. La nuova tonica è '+esc(INTERVALS_T[m.up]||"")+'. Distanza sul cerchio delle quinte: '+m.rel.d+(m.rel.d===1?" passo":" passi")+' su 6.</p></div>';
+  if(m.pivots.length){h+='<div class="pcard"><h3>Accordi in comune (pivot)</h3><p class="muted small">Accordi che esistono in tutte e due le tonalità. Il primo è il più adatto come passaggio.</p><div class="tbl"><table><tr><th>Accordo</th><th>Nella tonalità di partenza</th><th>In quella di arrivo</th></tr>'+m.pivots.map(function(p){return '<tr><td><strong>'+esc(disp(p.name))+'</strong></td><td>'+esc(prettyRn(p.rnOld))+'</td><td>'+esc(prettyRn(p.rnNew))+'</td></tr>';}).join("")+'</table></div></div>';}
+  else h+='<div class="pcard"><h3>Accordi in comune (pivot)</h3><p>Le due tonalità non hanno triadi in comune: il passaggio con un pivot non è possibile. Usa uno degli altri metodi.</p></div>';
+  h+=m.methods.map(function(x,i){
+    var seq=x.seq.map(function(n,j){return chipName(n,j===0?"partenza":(j===x.seq.length-1?"arrivo":""));});
+    var body='<p class="how">'+esc(x.how)+'</p>'+row(seq)+'<p class="line"><strong>Accordi:</strong> '+esc(x.seq.map(disp).join(" – "))+'</p><p class="why">'+esc(x.effect)+'</p>';
+    return card(esc(x.title),i===0?["best",S.genre?"Consigliato per il genere":"Il più naturale"]:["alt","Alternativa"],body,x.seq.map(disp).join(" – "),{chords:x.seq.map(parseChordName),label:[x.id],key:S.key,to:to});
+  }).join("");
+  $("modOut").innerHTML=h;
+}
+var INTERVALS_T={0:"sulla stessa tonica",1:"un semitono sopra",2:"un tono sopra",3:"una terza minore sopra",4:"una terza maggiore sopra",5:"una quarta sopra",6:"un tritono sopra",7:"una quinta sopra",8:"una sesta minore sopra",9:"una sesta maggiore sopra",10:"un tono sotto",11:"un semitono sotto"};
+INTERVALS_T[10]="una settima minore sopra (cioè un tono sotto)";INTERVALS_T[11]="una settima maggiore sopra (cioè un semitono sotto)";
+/* ---------- impostazioni e tab ---------- */
+function refresh(){
+  stopPreview();
+  var cur=S.key.name+":"+S.key.mode,cur2=$("toKey").value;
+  fillKeys($("key"),cur);fillKeys($("toKey"),cur2||"G:major");fillTargets();
+  [["genOut",doGenerate],["emoOut",doRecommend],["apOut",doApproach],["modOut",doModulate]].forEach(function(x){if($(x[0]).innerHTML.trim()!=="")x[1]();});
+}
+function showTab(id){["gen","emo","ap","mod"].forEach(function(t){$("p-"+t).classList.toggle("hidden",t!==id);$("t-"+t).setAttribute("aria-selected",t===id?"true":"false");});}
+function copyText(t,btn){
+  var done=function(ok){var old=btn.textContent;btn.textContent=ok?"Copiato":"Seleziona e copia";setTimeout(function(){btn.textContent="Copia";},1800);};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){done(true);},function(){fb();});return;}}catch(e){}
+  fb();
+  function fb(){var ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();var ok=false;try{ok=document.execCommand("copy");}catch(e){}document.body.removeChild(ta);done(ok);}
+}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-copy]");if(b)copyText(copyStore[b.getAttribute("data-copy")],b);});
+document.addEventListener("click",function(e){
+  var mb=e.target.closest&&e.target.closest("[data-midi]");if(mb){downloadMidi(mb.getAttribute("data-midi"));return;}
+  var pb=e.target.closest&&e.target.closest("[data-play]");if(pb){var id=pb.getAttribute("data-play");if(PLAY.id===id)stopPreview();else startPreview(id);}
+});
+$("loopBars").addEventListener("change",relabel);
+$("bpm").addEventListener("input",checkBpm);$("bpm").addEventListener("change",function(){checkBpm();$("bpm").value=String(bpmVal());$("bpm").removeAttribute("aria-invalid");$("bpmMsg").textContent="";});
+$("themeBtn").addEventListener("click",function(){applyTheme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
+window.addEventListener("storage",function(e){if(e.key==="qc_theme"&&(e.newValue==="light"||e.newValue==="dark")&&e.newValue!==document.documentElement.getAttribute("data-theme"))applyTheme(e.newValue);});
+applyTheme(loadTheme());
+$("key").addEventListener("change",function(){S.key=keyOf($("key").value);refresh();});
+$("names").addEventListener("change",function(){S.it=$("names").value==="it";refresh();});
+$("genre").addEventListener("change",function(){S.genre=$("genre").value;refresh();});
+$("ext").addEventListener("change",function(){S.ext=$("ext").checked;refresh();});
+$("notes").addEventListener("change",function(){S.notes=$("notes").checked;refresh();});
+$("go").addEventListener("click",doGenerate);$("emoGo").addEventListener("click",doRecommend);$("apGo").addEventListener("click",doApproach);$("modGo").addEventListener("click",doModulate);
+$("energy").addEventListener("input",function(){$("energyLab").textContent=["molto calma","calma","media","intensa","molto intensa"][parseInt($("energy").value,10)-1];});
+["gen","emo","ap","mod"].forEach(function(t){$("t-"+t).addEventListener("click",function(){showTab(t);});});
+$("genre").innerHTML='<option value="">Nessun genere</option>'+GENRES.map(function(g){return '<option value="'+g.id+'">'+g.name+'</option>';}).join("");
+$("emo").innerHTML=EMOTIONS.map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join("");
+fillKeys($("key"),"C:major");fillKeys($("toKey"),"G:major");fillTargets();
+$("energyLab").textContent="media";
+window.__pt={setKey:function(v){$("key").value=v;S.key=keyOf(v);refresh();},gen:doGenerate,emo:doRecommend,ap:doApproach,mod:doModulate,S:S,
+  planBeats:planBeats,voicing:voicing,buildMidi:buildMidi,midiName:midiName,parseChordName:parseChordName,store:function(){return MIDI_STORE;},preview:function(){return PLAY;},audio:function(){return AC;}};
+})();
+
+</script>
+</body>
+</html>

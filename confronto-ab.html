@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="dark">
+<html lang="it" data-theme="dark" data-ab="empty">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,7 +9,10 @@
 <meta property="og:site_name" content="ToneBench">
 <meta property="og:title" content="Confronto A/B · ToneBench">
 <meta property="og:description" content="Confronto A/B tra il tuo mix, dal DAW in diretta o da file, e fino a 6 riferimenti a loudness pareggiata: spettro, fase, goniometro e ascolto per banda. Tutto nel browser, nessun upload.">
-<meta name="theme-color" content="#0e1013">
+<meta name="theme-color" content="#0E1015">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Essentia.js 0.1.3 (Music Technology Group, UPF · licenza AGPL-3.0): motore MIR in WebAssembly. Scaricato solo il codice: l’audio resta nel browser. -->
 <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.web.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js-core.js" defer></script>
@@ -140,6 +143,194 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 .sf{max-width:var(--site-max);margin:8px auto 0;padding:16px 18px calc(24px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);text-align:center;font-size:.78rem;color:var(--muted)}
 .sf p{margin:0}.sf .sf__lic{margin-top:4px;font-size:.72rem}.sf a{color:inherit;text-decoration:underline;text-underline-offset:2px}.sf a:hover{color:var(--text)}
 @media (max-width:640px){.sn__in{padding:10px 16px}.sn__nav{order:4;width:100%}.sf{padding-left:16px;padding-right:16px}}
+/* =====================================================================================
+   DESIGN SYSTEM «STUDIO DOCK» — identico a index.html (stessi token, stessi font, stesse superfici).
+   Ultimo livello della cascata: solo aspetto e disposizione; id e motore audio invariati. Nessun CDN per il layout.
+   ===================================================================================== */
+:root{
+ --bg:#0E1015;--side:#12151B;--surface:#171B22;--surface2:#1E232D;--inset:#1E232D;--inset-line:rgba(255,255,255,.09);--line:rgba(255,255,255,.06);--drop:rgba(255,255,255,.11);
+ --text:#E9E6DF;--muted:#8E939D;--faint:#5E636D;--accent:#E2A54A;--accent-text:#1A1308;--accent-soft:rgba(226,165,74,.13);--sage:#8DB596;--sage-soft:rgba(141,181,150,.15);
+ --ok:#8DB596;--warn:#F08A5D;--bad:#E3574D;--c1:#E2A54A;--c2:#8FA3BF;--c3:#8DB596;--c4:#D88570;
+ --card-shadow:none;--float-shadow:0 20px 60px rgba(0,0,0,.5),0 2px 10px rgba(0,0,0,.35);
+ --sans:'Inter Tight','Inter',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+ --r-card:22px;--r:12px;--side-w:320px;--site-max:1280px;color-scheme:dark;
+ /* nomi usati dal motore del Confronto A/B, collegati ai token comuni */
+ --panel:var(--surface);--panel2:var(--surface2);--canvas:var(--inset);--a:#E2A54A;--b:#8FA3BF;--a-text:#1A1308;--b-text:#0E1520
+}
+:root[data-theme="light"]{
+ --bg:#F2F0EB;--side:#E9E6DF;--surface:#FFFFFF;--surface2:#F5F3EE;--inset:#F2EFE9;--inset-line:rgba(30,34,40,.13);--line:rgba(30,34,40,.08);--drop:rgba(30,34,40,.14);
+ --text:#1E2127;--muted:#62676F;--faint:#9A9EA5;--accent:#AE7116;--accent-text:#FFFFFF;--accent-soft:rgba(174,113,22,.10);--sage:#4C7B5A;--sage-soft:rgba(76,123,90,.12);
+ --ok:#4C7B5A;--warn:#C2510F;--bad:#B4302A;--c1:#AE7116;--c2:#4E6788;--c3:#4C7B5A;--c4:#B65A45;
+ --card-shadow:0 1px 2px rgba(40,35,25,.04),0 6px 20px rgba(40,35,25,.04);--float-shadow:0 18px 44px rgba(40,35,25,.18),0 2px 8px rgba(40,35,25,.08);color-scheme:light;
+ --panel:var(--surface);--panel2:var(--surface2);--canvas:var(--inset);--a:#AE7116;--b:#4E6788;--a-text:#FFFFFF;--b-text:#FFFFFF
+}
+html,body{background:var(--bg)}
+body{font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;transition:background-color .3s,color .3s}
+.wrap{max-width:var(--site-max);padding:22px 28px 48px}
+h1,h2,h3,h4{font-family:var(--sans);letter-spacing:-.015em}
+::selection{background:var(--accent-soft)}
+.sn,.sf{font-family:var(--sans)}
+textarea,.kbd,kbd{font-family:var(--mono)}
+/* ---------- superfici morbide ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);padding:22px 24px;margin:0 0 16px;box-shadow:var(--card-shadow)}
+.panel h2,.sideBlock h2{font-size:1rem;font-weight:600;text-transform:none;letter-spacing:-.01em;color:var(--text);margin:0 0 12px}
+.metric{background:var(--inset);border:none;border-radius:14px;padding:10px 14px}.metric .v{font-size:1.15rem;font-weight:600;letter-spacing:-.02em}.metric .l{font-size:.76rem;color:var(--muted)}
+canvas{background:var(--inset);border:0;border-radius:16px}
+#gonio{background:#0E1015;border-radius:50%}
+.card2{background:var(--inset);border-radius:16px;padding:14px 16px;margin:0 0 10px;font-size:.88rem}
+.card2 h3{font-size:.95rem;font-weight:600;margin:0 0 6px}
+.msg{border-radius:12px;background:var(--inset)}
+.kbd{border-radius:6px;background:var(--surface2);border-color:var(--inset-line);font-size:.74rem}
+.legend{font-size:.82rem;gap:14px;margin:0 0 10px}.legend span{color:var(--muted)}.sw{width:20px;border-top-width:3px}
+.bar{border-radius:999px;background:var(--surface2);border:0;height:6px}.bar span{background:linear-gradient(90deg,var(--sage),var(--accent));border-radius:999px}
+.corr{height:14px;border:0;border-radius:999px;background:linear-gradient(90deg,color-mix(in srgb,var(--bad) 35%,transparent),color-mix(in srgb,var(--warn) 22%,transparent) 45%,color-mix(in srgb,var(--ok) 35%,transparent))}
+.corr i{border-radius:3px;background:var(--text)}.corr b{background:var(--line)}
+.refitem{border-top-color:var(--line);font-size:.84rem;gap:10px}
+.refitem span{min-width:0;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{font-size:.78rem;font-weight:500;color:var(--muted);text-align:left}
+th,td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left}
+tr:last-child td{border-bottom:0}
+.tbl-wrap{overflow-x:auto}
+/* ---------- controlli ---------- */
+label{font-size:.84rem;color:var(--muted)}
+button,select,input[type=number],input[type=file]{font-family:var(--sans);background:var(--inset);border:1px solid transparent;border-radius:var(--r);color:var(--text);padding:8px 14px;font-weight:500;transition:background-color .15s,border-color .15s,color .15s,transform .15s}
+button:hover,select:hover{border-color:var(--inset-line)}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text);font-weight:600}
+button.primary:hover{filter:brightness(1.07)}
+button:focus-visible,select:focus-visible,input:focus-visible,.drop:focus-visible,canvas:focus-visible,.abDrop:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=number]{width:88px;padding:7px 10px}
+input[type=number]:focus,select:focus{border-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent)}input[type=range]{accent-color:var(--accent)}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%238E939D' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+.chipbtn{padding:5px 12px;font-size:.82rem;font-weight:500;border-radius:999px;background:var(--surface2)}
+.chipbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
+.seg{border:0;border-radius:12px;padding:3px;background:var(--inset);gap:2px}
+.seg button{border-radius:9px;background:transparent;padding:6px 12px;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.row{gap:8px 10px;margin:8px 0}
+.small{font-size:.82rem}
+details{margin:0 0 16px}
+details>summary{font-size:.95rem;font-weight:600;text-transform:none;letter-spacing:0;color:var(--text);padding:10px 4px}
+details>summary:hover{color:var(--accent)}
+details .panel{margin-top:6px}
+/* ---------- barra del sito (identica all'Analisi) ---------- */
+.sn{background:transparent;border-bottom:1px solid var(--line)}
+.sn__in{max-width:var(--site-max);padding:12px 28px}
+.sn__brand{font-weight:700;font-size:.95rem;letter-spacing:-.01em}
+.sn__links a,.sn__soon{border-radius:12px;font-size:.86rem;font-weight:500}
+.sn__links a[aria-current="page"]{background:var(--surface2);border-color:var(--line);color:var(--text)}
+.sn__theme{border-radius:12px;font-family:var(--sans);background:var(--surface);border-color:var(--line)}
+.sf{max-width:var(--site-max);font-size:.78rem;border-top-color:var(--line)}
+/* ---------- intestazione della pagina ---------- */
+.top{background:transparent;border:0;border-radius:0;padding:4px 0 0;margin:0 0 14px;gap:12px 20px}
+.top h1{font-size:1.4rem;font-weight:700;letter-spacing:-.025em;margin:0}.top .sub{font-size:.84rem;color:var(--muted)}
+.topTitle{margin-right:auto}
+.leds{gap:6px 8px}
+.leds span.item{padding:5px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:.76rem}
+.led{width:8px;height:8px;background:var(--faint);box-shadow:none}
+.led.on{background:var(--ok);box-shadow:0 0 8px color-mix(in srgb,var(--ok) 70%,transparent)}.led.warn{background:var(--warn);box-shadow:0 0 8px color-mix(in srgb,var(--warn) 70%,transparent)}.led.bad{background:var(--bad)}
+/* guida a comparsa: stesso pulsante dell'Analisi */
+.guideBtn{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;font-size:.88rem;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 6px;cursor:pointer;white-space:nowrap}
+.guideBtn:hover{border-color:var(--accent)}
+.guideBtn[aria-expanded="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.guideBtnQ{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-text);font-weight:800;font-size:.8rem}
+.guideBtn[aria-expanded="true"] .guideBtnQ{background:var(--accent-text);color:var(--accent)}
+#guidePanel:not([open]){display:none}
+.guideClose{margin-left:auto;font-size:.8rem;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+.guideCard{border-radius:var(--r-card);background:var(--surface);box-shadow:var(--card-shadow)}
+.guideCard>summary{border-radius:var(--r-card);padding:14px 18px}
+.guideStep,.guideMidiCard,.guideMidiNote{border-radius:16px;background:var(--inset);border-color:transparent}
+.guideMidiNote{border-left:3px solid var(--accent)}
+/* ---------- stato iniziale: due dropzone affiancate ---------- */
+html[data-ab="empty"] body{background:radial-gradient(70vmax 50vmax at 14% 8%,var(--accent-soft),transparent 60%),radial-gradient(60vmax 50vmax at 90% 26%,color-mix(in srgb,var(--b) 16%,transparent),transparent 60%),var(--bg);background-attachment:fixed}
+html[data-ab="empty"] .abShell,html[data-ab="empty"] .leds{display:none}
+html[data-ab="active"] .abIntro{display:none}
+.abIntro{max-width:980px;margin:0 auto;text-align:center}
+.focusHead{padding:44px 12px 30px}
+.focusKicker{margin:0 0 10px;font-size:.84rem;font-weight:600;color:var(--accent)}
+.focusTitle{margin:0;font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.05;font-weight:700;letter-spacing:-.035em;color:var(--text)}
+.focusSub{margin:14px auto 0;max-width:560px;font-size:1.05rem;color:var(--muted)}
+.abDrops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.abDrop{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:230px;padding:36px 22px;border-radius:28px;cursor:pointer;text-align:center;border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 92%,transparent),color-mix(in srgb,var(--surface) 70%,transparent));-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:var(--card-shadow);transition:border-color .25s,transform .25s,box-shadow .25s}
+.abDrop strong{font-size:1.08rem;font-weight:600}.abDrop .muted{font-size:.88rem}
+.abDrop:hover,.abDrop.over{transform:translateY(-2px)}
+#abDropA:hover,#abDropA.over{border-color:var(--a);box-shadow:0 18px 50px color-mix(in srgb,var(--a) 16%,transparent)}
+#abDropB:hover,#abDropB.over{border-color:var(--b);box-shadow:0 18px 50px color-mix(in srgb,var(--b) 18%,transparent)}
+.abTag{position:absolute;top:16px;left:18px;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:700}
+.abTag.tagA{background:var(--a);color:var(--a-text)}.abTag.tagB{background:var(--b);color:var(--b-text)}
+.abIco{width:60px;height:60px;border-radius:20px;display:grid;place-items:center}
+#abDropA .abIco{background:color-mix(in srgb,var(--a) 15%,transparent);color:var(--a)}#abDropB .abIco{background:color-mix(in srgb,var(--b) 18%,transparent);color:var(--b)}
+.abIntroStatus{min-height:1.4em;margin:12px 0 0;color:var(--muted)}
+.introPills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;list-style:none;margin:16px 0 8px;padding:0}
+.introPills li{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;background:color-mix(in srgb,var(--surface) 80%,transparent);border:1px solid var(--line);color:var(--muted);font-size:.84rem;font-weight:500}
+.pDot{width:6px;height:6px;border-radius:50%;background:var(--a);flex:0 0 auto}
+.introPills li:nth-child(2) .pDot{background:var(--b)}.introPills li:nth-child(3) .pDot{background:var(--sage)}.introPills li:nth-child(4) .pDot{background:var(--c4)}
+.abDaw{margin:18px 0 0}
+.linkBtn{background:transparent;border:0;color:var(--muted);font-weight:500;padding:6px 10px;text-decoration:underline;text-underline-offset:3px}
+.linkBtn:hover{color:var(--text)}
+/* ---------- area di lavoro: barra laterale + area principale ---------- */
+.abShell{display:block}
+.abSide{display:flex;flex-direction:column;gap:16px;background:var(--side);border:1px solid var(--line);border-radius:var(--r-card);padding:22px;margin:0 0 16px}
+.dockBrand{display:none;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em}
+.wsLabel{margin:0 0 10px;font-size:.76rem;font-weight:500;color:var(--muted)}
+.sideBlock{border-top:1px solid var(--line);padding-top:16px}
+.sideAB{border-top:0;padding-top:0}
+.sideBlock .row{margin:6px 0}
+.sideBlock .drop{border:1px dashed var(--drop);border-radius:14px;padding:12px;font-size:.84rem;background:var(--inset)}
+.sideBlock .drop.over{border-color:var(--a)}
+#aInfo{display:block;width:100%;overflow-wrap:anywhere}
+/* selettore A / B: grande e tattile (la commutazione senza clic è già fatta dal motore con una rampa di guadagno) */
+.src{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.src button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:68px;padding:10px 14px;border-radius:16px;border:1px solid var(--line);background:var(--surface);font-size:1.45rem;font-weight:700;letter-spacing:-.02em;line-height:1.1;text-align:left;min-width:0;transition:background-color .18s,border-color .18s,color .18s,transform .12s,box-shadow .18s}
+.src button small{font-size:.72rem;font-weight:500;opacity:.8;letter-spacing:0;margin-top:3px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src button:active{transform:scale(.97)}
+.src button.sa:first-child:last-child{grid-column:1 / -1}
+.src button.sa[aria-pressed="true"]{background:var(--a);border-color:var(--a);color:var(--a-text);box-shadow:0 8px 24px color-mix(in srgb,var(--a) 30%,transparent)}
+.src button.sb[aria-pressed="true"]{background:var(--b);border-color:var(--b);color:var(--b-text);box-shadow:0 8px 24px color-mix(in srgb,var(--b) 30%,transparent)}
+.abKeys{margin:10px 0 0;font-size:.76rem;color:var(--muted)}
+.sideLoud .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sideLoud input[type=number]{width:76px}
+.dockFoot{margin:auto 0 0;padding-top:8px;font-size:.74rem;color:var(--faint)}
+.abMain{min-width:0}
+.whHead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px;margin:0 0 10px}
+.whHead h2{margin:0}
+.whHint{font-size:.76rem;color:var(--faint)}
+.waveHero #wave{height:120px}
+.waveHero #play{min-width:132px;border-radius:999px;padding:9px 18px}
+.waveHero #time{font-variant-numeric:tabular-nums;padding:6px 12px;border-radius:999px;background:var(--inset);font-size:.9rem}
+.waveHero input[type=range]{margin:8px 0 6px}
+.abCmpGrid{display:grid;gap:20px}
+#abCompare th.cA{color:var(--a)}#abCompare th.cB{color:var(--b)}
+#abCompare td:first-child{color:var(--muted)}
+#abCompare td{font-variant-numeric:tabular-nums}
+#abCompare td.dBig{color:var(--text);font-weight:700}
+#abSpec{height:230px}
+#spec{height:250px}
+.abGrid2{display:grid;gap:0 16px}
+/* ---------- desktop: barra laterale fissa a tutta altezza ---------- */
+@media (min-width:1024px){
+ html[data-ab="active"] body{padding-left:var(--side-w)}
+ html[data-ab="active"] .sn__brand{visibility:hidden}
+ .abSide{position:fixed;top:0;bottom:0;left:0;z-index:50;width:var(--side-w);margin:0;border:0;border-right:1px solid var(--line);border-radius:0;padding:22px 24px 28px;overflow-y:auto;scrollbar-width:thin}
+ .dockBrand{display:flex}
+}
+@media (min-width:1200px){
+ .abCmpGrid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:start}
+ .abGrid2{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:start}
+}
+@media (max-width:760px){.abDrops{grid-template-columns:1fr}.abDrop{min-height:170px}}
+@media (max-width:640px){
+ .wrap{padding:14px 16px 32px}.sn__in{padding:10px 16px}
+ .panel,.abSide{padding:18px;border-radius:18px}
+ .focusHead{padding:24px 4px 20px}.focusSub{font-size:.95rem}
+ .introPills li{font-size:.78rem;padding:5px 11px}
+ .top h1{font-size:1.2rem}
+ .waveHero #wave{height:96px}
+ .whHint{display:none}
+}
+@media (prefers-reduced-motion:reduce){button,.abDrop,.src button{transition:none}}
 </style>
 </head>
 <body>
@@ -156,15 +347,17 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 </header>
 <div class="wrap">
 <div class="top">
-<div><h1>Confronto A/B</h1><div class="sub">A/B Pro · DAW live o file · riferimenti · analisi</div></div>
+<div class="topTitle"><h1>Confronto A/B</h1><div class="sub">Il tuo mix accanto ai riferimenti · loudness pareggiata · DAW dal vivo o file</div></div>
 <div class="leds" aria-label="Stato">
 <span class="item"><i class="led" id="ledFocus"></i><span id="lblFocus">Finestra non attiva</span></span>
 <span class="item"><i class="led" id="ledSig"></i><span id="lblSig">Nessun segnale DAW</span></span>
 <span class="item"><i class="led" id="ledSync"></i><span id="lblSync">Sync spenta</span></span>
 <span class="item"><i class="led" id="ledSr"></i><span id="lblSr">—</span></span>
-</div></div>
-<details class="card guideCard" open>
-<summary>Guida rapida passo passo (come usare questo strumento)</summary>
+</div>
+<button id="guideBtn" class="guideBtn" type="button" aria-expanded="false" aria-controls="guidePanel"><span class="guideBtnQ" aria-hidden="true">?</span>Guida rapida</button>
+</div>
+<details class="card guideCard" id="guidePanel">
+<summary>Guida rapida passo passo (come usare questo strumento)<span class="guideClose">Chiudi</span></summary>
 <p class="guideHint">Quattro passaggi per confrontare il tuo mix con i riferimenti in modo onesto. Puoi chiudere questa guida in qualsiasi momento.</p>
 <ol class="guideSteps" role="list">
 <li class="guideStep">
@@ -236,50 +429,57 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 </div>
 </section>
 </details>
-<script>/* guida: Spazio sul titolo apre/chiude la guida invece di avviare la riproduzione */(function(){var s=document.querySelectorAll(".guideCard>summary");for(var i=0;i<s.length;i++){["keydown","keyup"].forEach(function(t){s[i].addEventListener(t,function(e){if(e.key===" "||e.code==="Space")e.stopPropagation();});});}})();</script>
+<script>/* guida: Spazio sul titolo apre/chiude la guida invece di avviare la riproduzione */(function(){var s=document.querySelectorAll(".guideCard>summary,#guideBtn");for(var i=0;i<s.length;i++){["keydown","keyup"].forEach(function(t){s[i].addEventListener(t,function(e){if(e.key===" "||e.code==="Space")e.stopPropagation();});});}})();</script>
 
-<div class="layout">
-<div>
-<section class="panel">
+<!-- ========== stato iniziale: due tracce da caricare ========== -->
+<section class="abIntro" aria-label="Carica le due tracce">
+<div class="focusHead">
+<p class="focusKicker">Confronto A/B</p>
+<p class="focusTitle">Il tuo mix accanto al riferimento.</p>
+<p class="focusSub">Carica due tracce: ToneBench pareggia la loudness e ti fa passare da A a B senza clic, sullo stesso punto del brano.</p>
+</div>
+<div class="abDrops">
+<div class="abDrop" id="abDropA" tabindex="0" role="button" aria-label="Traccia A: scegli o trascina il tuo mix">
+<span class="abTag tagA" aria-hidden="true">A</span><span class="abIco" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7 9 5-5 5 5"/><path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg></span>
+<strong>Traccia A — Il tuo mix</strong><span class="muted">Trascina il file qui o clicca per sceglierlo</span>
+</div>
+<div class="abDrop" id="abDropB" tabindex="0" role="button" aria-label="Traccia B: scegli o trascina uno o più riferimenti">
+<span class="abTag tagB" aria-hidden="true">B</span><span class="abIco" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4"/><path d="m7 9 5-5 5 5"/><path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg></span>
+<strong>Traccia B — Riferimento o versione alternativa</strong><span class="muted">Anche più file insieme, fino a 6</span>
+</div>
+</div>
+<p class="small abIntroStatus" id="abIntroStatus" role="status" aria-live="polite"></p>
+<ul class="introPills" aria-label="Cosa fa il Confronto A/B">
+<li><span class="pDot" aria-hidden="true"></span>Loudness match in LUFS</li>
+<li><span class="pDot" aria-hidden="true"></span>Commutazione A/B senza clic</li>
+<li><span class="pDot" aria-hidden="true"></span>Spettro sovrapposto A vs B</li>
+<li><span class="pDot" aria-hidden="true"></span>100% locale, nessun upload</li>
+</ul>
+<p class="abDaw"><button type="button" id="abUseDaw" class="linkBtn">Oppure usa il DAW dal vivo come sorgente A →</button></p>
+</section>
+
+<!-- ========== area di lavoro «Studio Dock» ========== -->
+<div class="abShell">
+<aside class="abSide" aria-label="Sorgenti e loudness">
+<div class="dockBrand"><svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="9" fill="var(--accent)"/><path d="M6 16h4l2.5-7 4 14 3.5-11 2.5 7 2-3H27" fill="none" stroke="var(--accent-text)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>ToneBench</span></div>
+<section class="sideBlock sideAB" aria-label="Sorgente in ascolto">
+<p class="wsLabel">In ascolto</p>
+<div class="src" id="src" role="group" aria-label="Sorgente in ascolto"></div>
+<p class="abKeys"><span class="kbd">T</span> alterna A/B · <span class="kbd">A</span> · <span class="kbd">B</span> · <span class="kbd">1</span>…<span class="kbd">6</span></p>
+</section>
+<section class="sideBlock">
 <h2>Sorgente A</h2>
 <div class="row"><div class="seg" role="group" aria-label="Tipo di sorgente A"><button id="aModeLive" aria-pressed="true">DAW Live</button><button id="aModeFile" aria-pressed="false">File A (Mix)</button></div>
 <button id="btnLoadA" class="hidden">Carica File A</button><input type="file" id="fileA" accept="audio/*,.wav,.mp3,.flac,.m4a,.ogg" class="hidden"><span class="small muted" id="aInfo"></span></div>
 <div id="aDrop" class="drop hidden" tabindex="0" role="button" aria-label="Scegli o trascina il file A">Trascina qui il file A (il tuo mix esportato) o premi per sceglierlo</div>
-<h2 style="margin-top:10px">Riferimenti (B)</h2>
+</section>
+<section class="sideBlock">
+<h2>Riferimenti (B)</h2>
 <div class="row"><button id="btnAddRef" class="primary">Aggiungi riferimento</button><input type="file" id="refFile" accept="audio/*,.wav,.mp3,.flac,.m4a,.ogg" multiple class="hidden"><span class="small muted">Fino a 6, anche più file insieme. Restano sul computer.</span></div>
 <div id="refList"></div>
 <p id="status" class="small" role="status" aria-live="polite"></p>
 </section>
-
-<section class="panel">
-<h2>Ascolto</h2>
-<div class="src" id="src" role="group" aria-label="Sorgente in ascolto"></div>
-<div class="row"><button id="play" class="primary" aria-label="Riproduci o metti in pausa">▶ Riproduci</button><span id="time">0:00 / 0:00</span><label><input type="checkbox" id="loopOn"> Ciclo</label><button id="loopS" class="chipbtn">Inizio</button><button id="loopE" class="chipbtn">Fine</button><button id="loopC" class="chipbtn">Cancella</button></div>
-<input type="range" id="seek" min="0" max="1000" value="0" aria-label="Posizione">
-<p class="small muted" id="seekNote"></p>
-<canvas id="wave" role="img" aria-label="Forma d’onda"></canvas>
-<div class="row"><label><input type="checkbox" id="lockSpace" checked> Blocca la barra spaziatrice quando la sincronizzazione col DAW è attiva (usa Maiusc+Spazio)</label></div>
-<p class="small muted" id="kbdHint"></p>
-</section>
-
-<section class="panel">
-<h2>Spettro dal vivo (A e B a volume pareggiato)</h2>
-<div class="legend"><span><i class="sw" style="border-top-color:var(--a)"></i>A</span><span><i class="sw" style="border-top-color:var(--b);border-top-style:dashed"></i>B</span></div>
-<canvas id="spec" role="img" aria-label="Spettro per terzi d’ottava di A e B"></canvas>
-</section>
-</div>
-
-<aside>
-<section class="panel">
-<h2>Modalità di ascolto</h2>
-<div class="row modes" id="modes" role="group" aria-label="Modalità di ascolto"></div>
-<h2 style="margin-top:8px">Ascolto per banda</h2>
-<div class="row" id="bands" role="group" aria-label="Filtro passa-banda"></div>
-<div class="row"><label for="bandLo">Personalizzata</label><input type="number" id="bandLo" value="100" min="20" max="18000" step="10"><span class="muted">–</span><input type="number" id="bandHi" value="800" min="25" max="20000" step="10"><span class="muted small">Hz</span></div>
-<p class="small muted">Filtri a 24 dB per ottava (Linkwitz-Riley): senti solo quella gamma, su A e su B. Utile per sub-bassi e sibilanti.</p>
-</section>
-
-<section class="panel">
+<section class="sideBlock sideLoud">
 <h2>Loudness</h2>
 <div class="row"><label><input type="checkbox" id="match" checked> Pareggio automatico (abbassa solo il più forte)</label></div>
 <div class="row"><label for="mtype">Misura di A dal vivo</label><select id="mtype"><option value="int">Integrata (dal reset)</option><option value="st">A breve termine (3 s)</option></select><button id="resetMeter" class="chipbtn">Azzera</button></div>
@@ -288,7 +488,33 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 <p id="matchMsg" class="small" role="status"></p>
 <div class="grid" id="readout"></div>
 </section>
-
+<p class="dockFoot">Elaborazione 100% locale · nessun upload</p>
+</aside>
+<div class="abMain">
+<section class="panel waveHero" aria-label="Ascolto e forma d’onda">
+<div class="whHead"><h2>Ascolto</h2><span class="whHint">Clicca sulla forma d’onda per spostarti · <span class="kbd">L</span> ciclo · <span class="kbd">[</span> <span class="kbd">]</span> inizio e fine</span></div>
+<div class="row"><button id="play" class="primary" aria-label="Riproduci o metti in pausa">▶ Riproduci</button><span id="time">0:00 / 0:00</span><label><input type="checkbox" id="loopOn"> Ciclo</label><button id="loopS" class="chipbtn">Inizio</button><button id="loopE" class="chipbtn">Fine</button><button id="loopC" class="chipbtn">Cancella</button></div>
+<input type="range" id="seek" min="0" max="1000" value="0" aria-label="Posizione">
+<p class="small muted" id="seekNote"></p>
+<canvas id="wave" role="img" aria-label="Forma d’onda"></canvas>
+<div class="row"><label><input type="checkbox" id="lockSpace" checked> Blocca la barra spaziatrice quando la sincronizzazione col DAW è attiva (usa Maiusc+Spazio)</label></div>
+<p class="small muted" id="kbdHint"></p>
+</section>
+<section class="panel abCmp" aria-labelledby="abCmpT">
+<div class="whHead"><h2 id="abCmpT">A vs B a colpo d’occhio</h2><span class="whHint" id="abCmpWho"></span></div>
+<div class="abCmpGrid">
+<div class="tbl-wrap"><table id="abCompare"></table><p class="small muted" id="abCmpNote"></p></div>
+<div><div class="legend"><span><i class="sw" style="border-top-color:var(--a)"></i>A</span><span><i class="sw" style="border-top-color:var(--b);border-top-style:dashed"></i>B</span></div>
+<canvas id="abSpec" role="img" aria-label="Spettro medio per terzi d’ottava dei file A e B"></canvas>
+<p class="small muted">Spettro medio dei file per terzi d’ottava, normalizzato sulla zona 250 Hz – 4 kHz: conta la forma, non il volume.</p></div>
+</div>
+</section>
+<div class="abGrid2">
+<section class="panel">
+<h2>Spettro dal vivo (A e B a volume pareggiato)</h2>
+<div class="legend"><span><i class="sw" style="border-top-color:var(--a)"></i>A</span><span><i class="sw" style="border-top-color:var(--b);border-top-style:dashed"></i>B</span></div>
+<canvas id="spec" role="img" aria-label="Spettro per terzi d’ottava di A e B"></canvas>
+</section>
 <section class="panel">
 <h2>Fase e immagine stereo</h2>
 <div class="row"><span class="small muted">Correlazione</span><b id="corrVal">n.d.</b><span class="small muted" id="corrWord"></span></div>
@@ -297,14 +523,21 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 <canvas id="gonio" width="200" height="200" role="img" aria-label="Goniometro"></canvas>
 <div class="row"><label for="goniScale">Scala</label><select id="goniScale"><option value="fixed">Fissa</option><option value="auto">Automatica</option></select></div>
 </section>
-
+</div>
+<div class="abGrid2">
+<section class="panel">
+<h2>Modalità di ascolto</h2>
+<div class="row modes" id="modes" role="group" aria-label="Modalità di ascolto"></div>
+<h2 style="margin-top:8px">Ascolto per banda</h2>
+<div class="row" id="bands" role="group" aria-label="Filtro passa-banda"></div>
+<div class="row"><label for="bandLo">Personalizzata</label><input type="number" id="bandLo" value="100" min="20" max="18000" step="10"><span class="muted">–</span><input type="number" id="bandHi" value="800" min="25" max="20000" step="10"><span class="muted small">Hz</span></div>
+<p class="small muted">Filtri a 24 dB per ottava (Linkwitz-Riley): senti solo quella gamma, su A e su B. Utile per sub-bassi e sibilanti.</p>
+</section>
 <section class="panel">
 <h2>Schede dei brani</h2>
 <div id="cardA"></div><div id="cardB"></div>
 </section>
-</aside>
 </div>
-
 <details open><summary>Collegamento al DAW e audio</summary>
 <div class="panel">
 <details><summary style="text-transform:none;letter-spacing:0">Come si fa su Mac (una volta sola)</summary>
@@ -344,6 +577,8 @@ ol,ul{margin:6px 0 8px;padding-left:20px}
 </div></details>
 
 <div class="panel small muted"><span class="kbd">Spazio</span> riproduci/pausa (vedi il blocco; con il MIDI Out attivo manda Start/Stop al DAW, Maiusc+Spazio solo B) · <span class="kbd">A</span> sorgente A · <span class="kbd">B</span> o <span class="kbd">1</span>…<span class="kbd">6</span> riferimento · <span class="kbd">T</span> alterna · <span class="kbd">M</span> modalità · <span class="kbd">F</span> banda · <span class="kbd">L</span> ciclo · <span class="kbd">[</span> <span class="kbd">]</span> ciclo · <span class="kbd">←</span> <span class="kbd">→</span> ±5 s (bloccati con la sincronizzazione attiva). I tasti arrivano solo se la finestra del browser è attiva (guarda l’indicatore in alto): dal DAW usa i pulsanti. La commutazione A/B usa una rampa di 8 ms per evitare i click.</div>
+</div>
+</div>
 </div>
 <footer class="sf"><p>Versione 0.6 Beta · Elaborazione 100% locale nel browser · Privacy: nessun file audio lascia il tuo dispositivo.</p><p class="sf__lic">Tonalità e BPM con <a href="https://essentia.upf.edu/" rel="noopener">Essentia.js</a> (Music Technology Group, UPF), rilasciato con licenza <a href="https://www.gnu.org/licenses/agpl-3.0.html" rel="noopener license">AGPL-3.0</a> · <a href="#">Codice sorgente di questo sito</a></p></footer>
 <script>
@@ -1825,6 +2060,116 @@ window.addEventListener("storage",function(e){if(e.key==="qc_theme"&&(e.newValue
 applyTheme(loadTheme());
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",essInit);else essInit();   // gli script «defer» girano prima di DOMContentLoaded
 window.__ab3={ess:function(){return ESS;},essWait:essWait,addRefBuf:addRefBuf,setATrack:setATrack,setAMode:setAMode,select:select,state:function(){return {aMode:aMode,sel:sel,lastRef:lastRef,playing:playing,gains:gains,refs:refs.length,syncRunning:syncRunning,band:band,mode:mode,pos:curPos(),offset:curRef()?curRef().offset:null,aSrc:!!aSrc,refSrc:!!refSrc};},meter:function(){return meter;},proc:function(){return proc;},ctx:function(){return ctx;},nodes:function(){return nodes;},tr:function(){return tr;},tracks:function(){return {a:aTrack,refs:refs};},doMatch:doMatch,togglePlay:togglePlay,midiMsg:function(d,ts){onMidiMsg({data:d,timeStamp:ts});},sendMidi:sendMidi,dawToggle:dawToggle,drawGonio:drawGonio,seek:seek};
+})();
+</script>
+<script>
+/* ===== ToneBench · Confronto A/B: vista «Studio Dock». Solo interfaccia: usa le API pubbliche (__ab3) e i controlli
+   esistenti (#fileA, #refFile, #aModeFile); nessun nodo audio, nessun AudioContext creato qui. Testi solo con textContent. ===== */
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id);},H=document.documentElement,forced=false;
+function api(){return window.__ab3||null;}
+/* ---------- stato: «empty» finché non c'è A da file, un riferimento o il DAW collegato ---------- */
+function isActive(){
+  var a=api();if(!a)return forced;var t=a.tracks(),st=a.state();
+  var daw=st.aMode==="live"&&/(^|\s)(on|warn)(\s|$)/.test(($("ledSig")||{}).className||"");
+  return forced||!!t.a||t.refs.length>0||daw;
+}
+function syncState(){
+  var on=isActive(),v=on?"active":"empty";
+  if(H.getAttribute("data-ab")!==v){H.setAttribute("data-ab",v);setTimeout(function(){window.dispatchEvent(new Event("resize"));drawSpec2();},30);}
+}
+/* ---------- dropzone del primo avvio: riusano gli input esistenti (stesso percorso di caricamento) ---------- */
+function feed(input,files,multi){
+  if(!files||!files.length)return;
+  try{var dt=new DataTransfer();var n=multi?files.length:1;for(var i=0;i<n;i++)dt.items.add(files[i]);input.files=dt.files;}catch(e){return;}
+  input.dispatchEvent(new Event("change",{bubbles:true}));
+}
+function toFileMode(){var a=api();if(a&&a.state().aMode!=="file"&&$("aModeFile"))$("aModeFile").click();}
+function wire(zone,pick,drop){
+  zone.addEventListener("click",pick);
+  zone.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();e.stopPropagation();pick();}});
+  ["dragenter","dragover"].forEach(function(n){zone.addEventListener(n,function(e){e.preventDefault();zone.classList.add("over");});});
+  ["dragleave","drop"].forEach(function(n){zone.addEventListener(n,function(e){e.preventDefault();zone.classList.remove("over");});});
+  zone.addEventListener("drop",function(e){drop(e.dataTransfer&&e.dataTransfer.files);});
+}
+wire($("abDropA"),function(){toFileMode();$("fileA").click();},function(f){toFileMode();feed($("fileA"),f,false);});
+wire($("abDropB"),function(){$("refFile").click();},function(f){feed($("refFile"),f,true);});
+$("abUseDaw").addEventListener("click",function(){
+  forced=true;var a=api();if(a&&a.state().aMode!=="live"&&$("aModeLive"))$("aModeLive").click();syncState();
+  var d=$("btnEnable");if(d){var det=d.closest("details");if(det)det.open=true;setTimeout(function(){d.scrollIntoView({behavior:"smooth",block:"center"});d.focus({preventScroll:true});},60);}
+});
+// messaggi di lettura visibili anche nello stato iniziale
+(function(){var src=$("status"),dst=$("abIntroStatus");if(!src||!dst||!window.MutationObserver)return;new MutationObserver(function(){dst.textContent=src.textContent;}).observe(src,{childList:true,characterData:true,subtree:true});})();
+/* ---------- guida a comparsa (come nell'Analisi) ---------- */
+(function(){var b=$("guideBtn"),g=$("guidePanel");if(!b||!g)return;
+  b.addEventListener("click",function(){g.open=!g.open;if(g.open){g.querySelector("summary").focus({preventScroll:true});g.scrollIntoView({behavior:"smooth",block:"nearest"});}});
+  g.addEventListener("toggle",function(){b.setAttribute("aria-expanded",g.open?"true":"false");if(!g.open&&document.activeElement&&g.contains(document.activeElement))b.focus();});
+  g.addEventListener("keydown",function(e){if(e.key==="Escape"&&g.open){e.preventDefault();g.open=false;}});
+})();
+/* ---------- confronto A vs B: valori dei file e spettro medio sovrapposto ---------- */
+var cache=typeof WeakMap!=="undefined"?new WeakMap():null;
+function f1(v,d){if(v===null||v===undefined||!isFinite(v))return "—";return v.toFixed(d===undefined?1:d).replace(".",",").replace("-","−");}
+function sgn(v,d){if(v===null||v===undefined||!isFinite(v))return "—";return (v>0?"+":(v<0?"−":"±"))+Math.abs(v).toFixed(d===undefined?1:d).replace(".",",");}
+function chs(buf){var c=[];for(var i=0;i<Math.min(2,buf.numberOfChannels);i++)c.push(buf.getChannelData(i));return c;}
+function extra(t){
+  if(!t||!t.buf||!cache)return null;var x=cache.get(t);if(x)return x.done?x:null;
+  x={done:false};cache.set(t,x);
+  setTimeout(function(){try{var c=chs(t.buf);x.st=typeof stereoInfo==="function"?stereoInfo(c):null;
+    var b=typeof spectrum==="function"?spectrum(c,t.buf.sampleRate,60):null;if(b){var m=0;for(var i=10;i<=22;i++)m+=b[i];m/=13;x.curve=b.map(function(v){return v-m;});}}catch(e){}
+    x.done=true;render(true);},20);
+  return null;
+}
+function widthTxt(st){if(!st)return "—";return st.width<=-59?"mono":f1(st.width)+" dB";}
+var lastSig="";
+function render(force){
+  var a=api();if(!a)return;var T=a.tracks(),S=a.state(),A=S.aMode==="file"?T.a:null,B=S.lastRef>=0?T.refs[S.lastRef]:null;
+  var ia=A&&A.info||{},ib=B&&B.info||{},xa=extra(A),xb=extra(B);
+  var sig=[S.aMode,A?A.name:"",B?B.name:"",ia.status,ib.status,ia.tp,ib.tp,ia.dr,ib.dr,!!xa,!!xb,S.lastRef].join("|");
+  if(!force&&sig===lastSig)return;lastSig=sig;
+  var rows=[
+    ["Loudness integrata","LUFS",A?A.lufs:null,B?B.lufs:null,1],
+    ["True Peak","dBTP",ia.tp,ib.tp,1],
+    ["LRA","LU",A?A.lra:null,B?B.lra:null,1],
+    ["DR (stima)","dB",ia.dr,ib.dr,0],
+    ["PLR","dB",ia.plr,ib.plr,1],
+    ["Larghezza stereo","dB",xa&&xa.st?xa.st.width:null,xb&&xb.st?xb.st.width:null,1,"w"],
+    ["Correlazione","",xa&&xa.st?xa.st.corr:null,xb&&xb.st?xb.st.corr:null,2]
+  ];
+  var tb=$("abCompare");tb.textContent="";
+  var hd=document.createElement("tr");["Misura","A","B","Differenza B − A"].forEach(function(t,i){var th=document.createElement("th");th.textContent=t;if(i===1)th.className="cA";if(i===2)th.className="cB";hd.appendChild(th);});tb.appendChild(hd);
+  rows.forEach(function(r){
+    var tr=document.createElement("tr"),va=r[2],vb=r[3],d=(va!==null&&va!==undefined&&isFinite(va)&&vb!==null&&vb!==undefined&&isFinite(vb))?vb-va:null;
+    var cells=[r[0],(r[5]==="w"&&xa&&xa.st?widthTxt(xa.st):f1(va,r[4])+(r[1]&&isFinite(va)?" "+r[1]:"")),(r[5]==="w"&&xb&&xb.st?widthTxt(xb.st):f1(vb,r[4])+(r[1]&&isFinite(vb)?" "+r[1]:"")),d===null?"—":sgn(d,r[4])+(r[1]?" "+r[1]:"")];
+    cells.forEach(function(c,i){var td=document.createElement("td");td.textContent=c;if(i===3&&d!==null&&Math.abs(d)>=(r[1]==="LUFS"?1:2))td.className="dBig";tr.appendChild(td);});tb.appendChild(tr);
+  });
+  var kt=function(i){return i.key?i.key.best.camelot+" · "+i.key.best.name:"—";},bt=function(i){return i.tempo?String(Math.round(i.tempo.bpm*10)/10).replace(".",",")+" BPM":"—";};
+  [["Chiave",kt(ia),kt(ib)],["Tempo",bt(ia),bt(ib)]].forEach(function(r){var tr=document.createElement("tr");r.concat([""]).forEach(function(c){var td=document.createElement("td");td.textContent=c;tr.appendChild(td);});tb.appendChild(tr);});
+  $("abCmpWho").textContent=(A?"A: "+A.name:(S.aMode==="live"?"A: DAW dal vivo":"A: —"))+"  ·  "+(B?"B"+(S.lastRef+1)+": "+B.name:"B: —");
+  $("abCmpNote").textContent=S.aMode==="live"?"Con A dal DAW i valori di A si leggono dal vivo nel pannello Loudness: carica il File A per il confronto completo.":((ia.status||ib.status)?"Analisi in corso: i valori compaiono man mano.":"");
+  drawSpec2();
+}
+function cv(n){return getComputedStyle(H).getPropertyValue(n).trim()||"#888";}
+function drawSpec2(){
+  var c=$("abSpec");if(!c)return;var a=api();if(!a)return;var T=a.tracks(),S=a.state();
+  var A=S.aMode==="file"?T.a:null,B=S.lastRef>=0?T.refs[S.lastRef]:null,xa=A&&cache&&cache.get(A),xb=B&&cache&&cache.get(B);
+  var dpr=window.devicePixelRatio||1,W=c.clientWidth,Hh=c.clientHeight;if(!W||!Hh)return;c.width=Math.round(W*dpr);c.height=Math.round(Hh*dpr);
+  var g=c.getContext("2d");g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,Hh);
+  var ser=[];if(xa&&xa.curve)ser.push({c:xa.curve,col:cv("--a"),dash:false});if(xb&&xb.curve)ser.push({c:xb.curve,col:cv("--b"),dash:true});
+  var L=44,R=10,Tp=10,Bt=24,pw=W-L-R,ph=Hh-Tp-Bt,n=29,mn=-30,mx=20;
+  var X=function(i){return L+pw*i/(n-1);},Y=function(v){v=Math.max(mn,Math.min(mx,v));return Tp+ph*(1-(v-mn)/(mx-mn));};
+  g.font="11px 'JetBrains Mono',ui-monospace,monospace";g.lineWidth=1;g.strokeStyle=cv("--line");g.fillStyle=cv("--muted");g.textAlign="right";
+  for(var v=-30;v<=20;v+=10){g.beginPath();g.moveTo(L,Y(v));g.lineTo(W-R,Y(v));g.stroke();g.fillText(v+" dB",L-6,Y(v)+4);}
+  g.textAlign="center";[[4,"63"],[10,"250"],[16,"1k"],[22,"4k"],[28,"16k"]].forEach(function(p){g.beginPath();g.moveTo(X(p[0]),Tp);g.lineTo(X(p[0]),Tp+ph);g.stroke();g.fillText(p[1]+" Hz",X(p[0]),Hh-7);});
+  if(!ser.length){g.fillStyle=cv("--muted");g.font="12px 'Inter Tight',system-ui,sans-serif";g.fillText(A||B?"Calcolo dello spettro…":"Carica A e B per vedere le due curve",L+pw/2,Tp+ph/2);return;}
+  ser.forEach(function(s){g.beginPath();g.strokeStyle=s.col;g.lineWidth=2.2;g.setLineDash(s.dash?[7,5]:[]);s.c.forEach(function(v,i){i?g.lineTo(X(i),Y(v)):g.moveTo(X(i),Y(v));});g.stroke();});g.setLineDash([]);
+}
+setInterval(function(){syncState();render(false);},500);
+window.addEventListener("resize",drawSpec2);
+if(window.MutationObserver)new MutationObserver(function(){drawSpec2();}).observe(H,{attributes:true,attributeFilter:["data-theme"]});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawSpec2);
+syncState();render(true);
+window.__abView={state:function(){return H.getAttribute("data-ab");},render:render};
 })();
 </script>
 </body>

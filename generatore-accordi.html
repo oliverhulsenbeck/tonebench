@@ -136,6 +136,46 @@ input[type=range]{width:100%}
  .scan{margin-left:0;width:100%}
 }
 @media (prefers-reduced-motion:reduce){button,body{transition:none}}
+
+/* ---------- Costruisci: timeline, tavolozza e consigli ---------- */
+.bSummary{background:var(--inset);border-radius:16px;padding:12px 16px;margin:14px 0;line-height:1.55}
+.timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:6px 0 4px}
+.tlItem{position:relative;cursor:grab;min-width:0;padding:22px 10px 10px;justify-content:flex-start;transition:transform .15s,box-shadow .15s,opacity .15s}
+.tlItem:active{cursor:grabbing}.tlItem.dragging{opacity:.4}
+.tlItem.over,.tlSlot.over{box-shadow:0 0 0 2px var(--accent);transform:translateY(-2px)}
+.tlIdx{position:absolute;top:6px;left:10px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.tlItem .role{display:block;margin-top:4px;font-size:.72rem;line-height:1.3;color:var(--text);opacity:.9}
+.tlBtns{display:flex;gap:4px;justify-content:center;margin-top:8px}
+.tlBtns button{width:28px;height:28px;padding:0;border-radius:9px;font-size:.82rem;line-height:1;background:var(--surface);border:1px solid var(--line)}
+:root[data-theme="light"] .tlBtns button{background:var(--surface2)}
+.tlBtns button:disabled{opacity:.35;cursor:default}
+.tlSlot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:150px;border:1px dashed var(--inset-line);border-radius:16px;color:var(--faint);font-size:.85rem;text-align:center;padding:10px;transition:box-shadow .15s,transform .15s,border-color .15s}
+.tlSlot span{font-family:var(--mono)}
+.tlSlot.next{border-color:color-mix(in srgb,var(--accent) 55%,transparent);color:var(--muted);background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.tlSlot.next span{font-size:1.4rem;color:var(--accent)}
+.bMsg{margin:6px 0 0;color:var(--warn)}.bMsg:empty{display:none}
+.bFoot{margin-top:10px}
+.bBlock{margin-top:22px}.bBlock h3{margin:0 0 4px}
+@media (min-width:1080px){
+ .bWork{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+ .bSide{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto;padding:4px 6px 4px 18px;border-left:1px solid var(--line);scrollbar-width:thin}
+ .bSide .bBlock:first-child{margin-top:4px}
+ .bSide .palette.sugg{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .bSide .palCard{min-width:0;flex:1 1 92px}
+}
+.palette{margin-top:10px}
+.palette.sugg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.palLab{margin:12px 0 8px;font-size:.78rem;font-weight:500;color:var(--muted)}
+.palRow{display:flex;flex-wrap:wrap;gap:8px}
+.palCard{cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .12s,box-shadow .15s}
+.palCard:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.palCard:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.palCard .why2{display:block;margin-top:4px;font-size:.72rem;line-height:1.3;color:var(--text);opacity:.85}
+.sugg .palCard{padding:10px 12px}
+.act-edit{margin-left:0}
+kbd{display:inline-block;font:600 .8em/1.4 var(--mono);padding:0 6px;border:1px solid var(--inset-line);border-bottom-width:2px;border-radius:5px;background:var(--surface2)}
+@media (max-width:760px){.timeline{grid-template-columns:repeat(2,minmax(0,1fr))}.tlSlot:not(.next){min-height:70px}}
+@media (prefers-reduced-motion:reduce){.tlItem,.tlSlot,.palCard{transition:none}}
 </style>
 </head>
 <body>
@@ -168,6 +208,7 @@ input[type=range]{width:100%}
 </section>
 <div class="tabs" role="tablist" aria-label="Strumenti">
 <button role="tab" id="t-gen" aria-selected="true" aria-controls="p-gen">Genera</button>
+<button role="tab" id="t-build" aria-selected="false" aria-controls="p-build">Costruisci</button>
 <button role="tab" id="t-emo" aria-selected="false" aria-controls="p-emo">Per emozione</button>
 <button role="tab" id="t-ap" aria-selected="false" aria-controls="p-ap">Raggiungere un accordo</button>
 <button role="tab" id="t-mod" aria-selected="false" aria-controls="p-mod">Cambiare tonalità</button>
@@ -179,6 +220,30 @@ input[type=range]{width:100%}
 <div><label for="aud">Audacia</label><select id="aud"><option value="0">Classica</option><option value="1" selected>Colorata</option><option value="2">Audace</option></select></div>
 <div><button class="primary" id="go">Genera</button></div></div>
 <div id="genOut"></div>
+</section>
+<section id="p-build" role="tabpanel" aria-labelledby="t-build" class="panel hidden">
+<h2>Costruisci la tua progressione</h2>
+<p class="muted">Trascina gli accordi nella timeline (fino a 8) oppure cliccali per sentirli e aggiungerli in coda. Riordina trascinando o con <kbd>←</kbd> <kbd>→</kbd>, togli con <kbd>×</kbd>. Ogni accordo mostra il suo ruolo in base a ciò che lo precede e lo segue.</p>
+<div class="bWork">
+<div class="bMain">
+<p class="bSummary" id="bSummary" role="status" aria-live="polite"></p>
+<div class="timeline" id="bTimeline" role="list" aria-label="Timeline della progressione, fino a 8 accordi"></div>
+<p class="small bMsg" id="bMsg" role="status" aria-live="polite"></p>
+<div class="foot bFoot" id="bFoot"></div>
+</div>
+<aside class="bSide" aria-label="Accordi da aggiungere">
+<div class="bBlock">
+<h3>Prossimi accordi consigliati</h3>
+<p class="muted small" id="bSuggHint"></p>
+<div class="palette sugg" id="bSugg" aria-label="Prossimi accordi consigliati"></div>
+</div>
+<div class="bBlock">
+<h3>Tavolozza completa</h3>
+<p class="muted small">I sette gradi della tonalità e una selezione di accordi di colore, prestiti e dominanti secondarie. Clic per ascoltare e aggiungere, oppure trascina nella timeline.</p>
+<div class="palette" id="bPalette" aria-label="Tavolozza degli accordi"></div>
+</div>
+</aside>
+</div>
 </section>
 <section id="p-emo" role="tabpanel" aria-labelledby="t-emo" class="panel hidden">
 <h2>Progressioni per emozione</h2>
@@ -499,7 +564,7 @@ function textOf(chords){return chords.map(function(c){return prettyRn(c.rn);}).j
 var copyId=0,copyStore={};
 function copyBtn(t){var id="c"+(++copyId);copyStore[id]=t;return '<button class="copy" data-copy="'+id+'">Copia</button>';}
 function card(title,badge,body,copy,midi){
-  var foot=(copy||midi)?'<div class="foot">'+(midi?midiBtns(midi):'')+(copy?copyBtn(copy):'')+(midi?'<span class="scan" data-scan="'+midi._id+'">'+esc(midiLabel(midi).scan)+'</span>':'')+'</div>':'';
+  var foot=(copy||midi)?'<div class="foot">'+(midi?midiBtns(midi):'')+(midi&&midi.tokens?'<button class="act act-edit" type="button" data-edit="'+midi._id+'">Modifica nel costruttore</button>':'')+(copy?copyBtn(copy):'')+(midi?'<span class="scan" data-scan="'+midi._id+'">'+esc(midiLabel(midi).scan)+'</span>':'')+'</div>':'';
   return '<article class="pcard"><header><h3>'+title+'</h3>'+(badge?'<span class="tag '+badge[0]+'">'+esc(badge[1])+'</span>':'')+'</header>'+body+foot+'</article>';
 }
 
@@ -655,7 +720,7 @@ function doGenerate(){
     ids.push(r.base.id);
     var body=row(r.chords.map(chip))+'<p class="line"><strong>In gradi:</strong> '+esc(r.chords.map(function(c){return prettyRn(c.rn);}).join(" – "))+'</p><p class="line"><strong>Accordi:</strong> '+esc(r.chords.map(function(c){return disp(c.name);}).join(" – "))+'</p>'+
       '<p class="why">'+esc(r.base.why)+'</p>'+(r.mods.length?'<ul class="mods">'+r.mods.map(function(m){return '<li>'+esc(m)+'</li>';}).join("")+'</ul>':'')+(r.note?'<p class="muted small">'+esc(r.note)+'</p>':'');
-    out.push(card("Base: "+esc(r.base.rn.map(prettyRn).join("–")),null,body,textOf(r.chords),{chords:r.chords,label:r.chords.map(function(c){return c.rn;}),key:S.key}));
+    out.push(card("Base: "+esc(r.base.rn.map(prettyRn).join("–")),null,body,textOf(r.chords),{chords:r.chords,label:r.chords.map(function(c){return c.rn;}),key:S.key,tokens:r.rn.slice()}));
   }
   $("genOut").innerHTML=out.join("");
 }
@@ -668,7 +733,7 @@ function doRecommend(){
   var h=list.map(function(x,i){
     var chords=progChords(x.p.rn,S.key,S.ext);
     var body=row(chords.map(chip))+'<p class="line"><strong>In gradi:</strong> '+esc(chords.map(function(c){return prettyRn(c.rn);}).join(" – "))+'</p><p class="line"><strong>Accordi:</strong> '+esc(chords.map(function(c){return disp(c.name);}).join(" – "))+'</p><p class="why">'+esc(x.p.why)+'</p><p class="muted small">Energia tipica: '+x.p.en+' su 5 · generi dove si usa spesso: '+x.p.gen.map(function(g){return GENRES.filter(function(q){return q.id===g;})[0].name;}).join(", ")+'.</p>';
-    return card(esc(x.p.rn.map(prettyRn).join("–")),i===0?["best","La più adatta"]:null,body,textOf(chords),{chords:chords,label:chords.map(function(c){return c.rn;}),key:S.key});
+    return card(esc(x.p.rn.map(prettyRn).join("–")),i===0?["best","La più adatta"]:null,body,textOf(chords),{chords:chords,label:chords.map(function(c){return c.rn;}),key:S.key,tokens:x.p.rn.slice()});
   }).join("");
   h+='<div class="tips"><h3>Per spostarla verso l’emozione scelta</h3><ul>'+VARIANTS[em].map(function(t){return '<li>'+esc(t)+'</li>';}).join("")+'</ul><p class="muted small">Sono tendenze comuni, non regole: l’effetto dipende anche da ritmo, voicing, melodia e timbro.</p></div>';
   box.innerHTML=h;
@@ -686,7 +751,7 @@ function doApproach(){
   $("apOut").innerHTML=order.map(function(a){
     var genres=Object.keys(APPROACH_GEN[a.id]).filter(function(g){return APPROACH_GEN[a.id][g]>=2;}).map(function(g){return GENRES.filter(function(q){return q.id===g;})[0].name;});
     var body='<p class="how">'+esc(a.how)+'</p>'+row(a.chords.map(chip))+'<p class="line"><strong>Accordi:</strong> '+esc(a.chords.map(function(c){return disp(c.name);}).join(" – "))+'</p><p class="why">'+esc(a.effect)+'</p>'+(genres.length?'<p class="muted small">Si sente spesso in: '+esc(genres.join(", "))+'.</p>':'');
-    return card(esc(a.title),a===best?["best",S.genre?"Consigliato per il genere":"Il più universale"]:["alt","Alternativa"],body,textOf(a.chords),{chords:a.chords,label:a.chords.map(function(c){return c.rn;}),key:S.key});
+    return card(esc(a.title),a===best?["best",S.genre?"Consigliato per il genere":"Il più universale"]:["alt","Alternativa"],body,textOf(a.chords),{chords:a.chords,label:a.chords.map(function(c){return c.rn;}),key:S.key,tokens:a.chords.map(function(c){return c.rn;})});
   }).join("");
 }
 /* ---------- Cambiare tonalità ---------- */
@@ -704,14 +769,235 @@ function doModulate(){
 }
 var INTERVALS_T={0:"sulla stessa tonica",1:"un semitono sopra",2:"un tono sopra",3:"una terza minore sopra",4:"una terza maggiore sopra",5:"una quarta sopra",6:"un tritono sopra",7:"una quinta sopra",8:"una sesta minore sopra",9:"una sesta maggiore sopra",10:"un tono sotto",11:"un semitono sotto"};
 INTERVALS_T[10]="una settima minore sopra (cioè un tono sotto)";INTERVALS_T[11]="una settima maggiore sopra (cioè un semitono sotto)";
+/* =====================================================================================
+   COSTRUISCI: timeline drag & drop (fino a 8 accordi), ruoli armonici contestuali, prossimi accordi consigliati
+   ===================================================================================== */
+var B={tokens:[]},B_MAX=8,AUD=null;
+var PAL={
+  major:{diat:["I","ii","iii","IV","V","vi","vii°"],color:["iv","bVI","bVII","bIII","V7/vi","V7/ii","V7/V","bII7"]},
+  minor:{diat:["i","ii°","bIII","iv","v","bVI","bVII"],color:["V","V7","IV","bII","V7/iv","V7/bVI","bII7","vii°7"]}
+};
+function effTok(t){return S.ext?extendTok(t,S.key.mode):t;}
+function pTok(t){return parseToken(t)||{acc:0,deg:-1,upper:true,suffix:"",target:null,rn:t};}
+function isTonicP(p){return p.deg===0&&p.acc===0&&!p.target;}
+function isDomP(p){return p.deg===4&&p.acc===0&&p.upper&&!p.target;}
+function degName(p){return (p.acc<0?"b":(p.acc>0?"#":""))+p.rn;}
+function sameChord(a,b){return a&&b&&a.pc===b.pc&&a.quality===b.quality;}
+// Analizza ogni accordo in base a tutto ciò che lo precede (e all'accordo successivo): grado contestuale e ruolo nel giro
+function analyzeProgression(tokens,key){
+  var ctx=keyCtx(key),mode=key.mode,minor=mode==="minor",out=[];
+  var items=tokens.map(function(t){var e=S.ext?extendTok(t,mode):t,c=chordOf(e,ctx)||chordOf(t,ctx);c.rn=e;c.f=funcOf(t,mode);return {tok:t,eff:e,p:pTok(t),c:c};});
+  items.forEach(function(it,i){
+    var prev=i>0?items[i-1]:null,next=i+1<items.length?items[i+1]:null,p=it.p,c=it.c,rn=prettyRn(it.eff),role="",kind="",f=c.f;
+    var domQ=c.quality==="7"||c.quality==="9",secDetected=false,target=null;
+    // dominante secondaria riconosciuta dal contesto: accordo maggiore/dominante che scende di quinta su un accordo non tonico
+    if(!p.target&&next&&!isDomP(p)&&!isTonicP(next.p)&&(domQ||(c.quality===""&&f==="X"))&&next.c.pc===(c.pc+5)%12){secDetected=true;target=degName(next.p);rn=prettyRn((domQ?"V7/":"V/")+target);f="X";}
+    if(p.target)target=p.target;
+    if(prev&&sameChord(prev.c,c)){role="Pedale / Ripetizione";kind="rep";}
+    else if(i===0&&!secDetected&&!p.target){role=isTonicP(p)?"Apertura · Tonica":"Inizio sospeso";kind=isTonicP(p)?"open":"susp";}
+    else if(i===items.length-1&&items.length>1&&isDomP(p)){role="Cadenza sospesa";kind="half";}
+    else if(p.target&&p.deg===4&&p.acc===0&&p.upper){role="Dominante secondaria → "+prettyRn(target);kind="sec";}
+    else if(secDetected){role="Dominante secondaria → "+prettyRn(target);kind="sec";}
+    else if(p.deg===1&&p.acc<0&&p.upper&&(c.quality==="7"||p.target)&&(!next||isTonicP(next.p)||p.target||(next&&next.p.target))){role="Sostituto di tritono";kind="trit";}
+    else if(p.target&&p.deg===6&&!p.upper){role="Diminuito di passaggio → "+prettyRn(target);kind="dim";}
+    else if(p.deg===1&&p.acc===0&&!p.upper&&next&&((isDomP(next.p))||(p.target&&next.p.target===p.target&&next.p.deg===4))){role="Pre-dominante (ii–V)";kind="iiV";}
+    else if(prev&&isDomP(prev.p)&&isTonicP(p)){role="Risoluzione autentica";kind="auth";}
+    else if(prev&&isDomP(prev.p)&&((!minor&&p.deg===5&&p.acc===0&&!p.upper)||(p.deg===5&&p.acc===-1&&p.upper))){role="Cadenza d’inganno";kind="dec";}
+    else if(prev&&prev.p.deg===3&&prev.p.acc===0&&!prev.p.target&&isTonicP(p)){role="Cadenza plagale";kind="plag";}
+    else if(prev&&prev.p.deg===1&&prev.p.acc===-1&&prev.p.upper&&isTonicP(p)&&(prev.c.quality==="7"||prev.c.quality==="9")){role="Risoluzione cromatica (tritono)";kind="auth";}
+    else if(prev&&minor&&prev.p.deg===1&&prev.p.acc===-1&&prev.p.upper&&isTonicP(p)){role="Cadenza frigia";kind="auth";}
+    else if(prev&&prev.p.deg===6&&prev.p.acc===-1&&!minor&&isTonicP(p)){role="Porta di servizio (♭VII → I)";kind="back";}
+    else if(!minor&&p.deg===3&&p.acc===0&&!p.upper){role="Prestito modale (scuro)";kind="borrow";}
+    else if(!minor&&p.acc===-1&&p.upper&&(p.deg===5||p.deg===6)){role="Slancio epico";kind="epic";}
+    else if(!minor&&p.acc===-1&&p.upper&&p.deg===2){role="Prestito modale (rock)";kind="borrow";}
+    else if(minor&&p.deg===3&&p.acc===0&&p.upper){role="Colore dorico";kind="dorian";}
+    else if(minor&&p.deg===1&&p.acc===-1&&p.upper){role="Colore frigio";kind="phryg";}
+    else if(isTonicP(p)){role="Ritorno alla tonica";kind="tonic";}
+    else{role={T:"Area di tonica",PD:"Pre-dominante",D:"Tensione verso la tonica",X:"Colore"}[c.f]||"Colore";kind="fn";}
+    c.f=f;out.push({tok:it.tok,eff:it.eff,p:p,c:c,rn:rn,role:role,kind:kind,f:f});
+  });
+  return out;
+}
+function progSummary(an,key){
+  if(!an.length)return "La timeline è vuota: trascina o clicca un accordo della tavolozza per iniziare. I consigli qui sotto partono dall’apertura del giro.";
+  var n=an.length,first=an[0],last=an[n-1],parts=[],cnt=function(k){return an.filter(function(a){return a.kind===k;}).length;};
+  parts.push("Giro di "+n+(n===1?" accordo":" accordi")+" in "+keyLabel(key.name,key.mode)+(isTonicP(first.p)?", parte dalla tonica":", parte sospeso su "+first.rn)+".");
+  var cad=[];if(cnt("auth"))cad.push(cnt("auth")===1?"una risoluzione autentica":cnt("auth")+" risoluzioni autentiche");if(cnt("dec"))cad.push("una cadenza d’inganno");if(cnt("plag"))cad.push("una cadenza plagale");if(cnt("back"))cad.push("una «porta di servizio»");
+  if(cad.length)parts.push("Contiene "+cad.join(", ")+".");
+  var col=cnt("sec")+cnt("trit")+cnt("dim")+cnt("borrow")+cnt("epic")+cnt("dorian")+cnt("phryg");
+  if(col)parts.push(col===1?"Un accordo di colore (prestito o dominante secondaria) aggiunge sapore fuori dalla scala.":col+" accordi di colore (prestiti o dominanti secondarie) danno un carattere più ricco.");
+  else if(n>1)parts.push("Tutto diatonico: suono chiaro e familiare.");
+  if(n>1){
+    if(isTonicP(last.p))parts.push("Chiude sulla tonica: il giro suona concluso.");
+    else if(isDomP(last.p))parts.push("Chiude sulla dominante: tensione aperta"+(isTonicP(first.p)?" che si risolve ripartendo dalla tonica, perfetta per un loop.":" che chiede di ripartire."));
+    else parts.push("Chiude su "+last.rn+": il giro resta aperto e invita a ripetersi.");
+  }
+  parts.push("Andamento: "+an.map(function(a){return {T:"T",PD:"PD",D:"D",X:"col."}[a.f]||"col.";}).join(" → ")+".");
+  return parts.join(" ");
+}
+// Prossimi accordi: tendenze dall'ultimo accordo, posizione nel loop, genere e tonalità attiva
+function suggestNextChords(tokens,key,genre){
+  var mode=key.mode,minor=mode==="minor",pal=PAL[mode],cands=pal.diat.concat(pal.color),n=tokens.length;
+  var lastT=n?tokens[n-1]:null,lp=lastT?pTok(lastT):null,an=n?analyzeProgression(tokens,key):[],la=n?an[n-1]:null;
+  var target=loopBars()===8?8:(n<4?4:8),closing=n>0&&n===target-1,start=n===0;
+  var T0=minor?"i":"I",V=minor?"V":"V",IV=minor?"iv":"IV",vi=minor?"bVI":"vi",ii=minor?"ii°":"ii";
+  var G={pop:["I","V","vi","IV","i","bVI","bIII","bVII"],rock:["bVII","bVI","bIII","IV","V"],metal:["bII","bVI","bVII","i","V"],edm:["bVI","bVII","vi","IV","i","bIII"],hiphop:["i","bVI","iv","bII"],
+    lofi:["ii","V7/ii","iii","IV","vi"],jazz:["ii","V7/V","V7/ii","bII7","V7","iiø7"],rnb:["ii","iii","V7/vi","IV","bII7"],folk:["I","IV","V","vi","i","iv","bVII"],cine:["bVI","bIII","bVII","iv","i","IV"]}[genre]||[];
+  var out=cands.map(function(t){
+    var p=pTok(t),s=0,why="";
+    function add(v,w){if(v>s||!why){if(v>s||!why)why=w;}s+=v;}
+    if(start){
+      if(isTonicP(p))add(6,"Apre il giro sulla tonica");else if(t===vi||t===IV)add(3,"Apre in modo morbido e sospeso");else if(t==="bVI"&&minor)add(2.5,"Apre con ampiezza");else add(0,"");
+    }else{
+      if(la&&lp.target&&lp.deg===4){var tg=pTok(lp.target);if(p.deg===tg.deg&&p.acc===tg.acc&&p.upper===tg.upper&&!p.target)add(7,"Risolve la dominante secondaria");}
+      if(la&&la.kind==="sec"&&!lp.target){var nx=(la.c.pc+5)%12,cc=chordOf(effTok(t),keyCtx(key));if(cc&&cc.pc===nx&&!p.target)add(6,"Risolve la dominante secondaria");}
+      if(lp&&lp.deg===1&&lp.acc===-1&&lp.upper&&isTonicP(p))add(6,"Risoluzione cromatica sulla tonica");
+      if(lp&&(isDomP(lp)||(lp.deg===6&&!lp.upper&&lp.acc===0))){
+        if(isTonicP(p))add(6,"Risoluzione forte");
+        else if((!minor&&t==="vi")||t==="bVI")add(4.5,"Sorpresa dolce-amara");
+        else if(t==="IV"&&!minor)add(1,"Ricade sulla sottodominante (blues)");
+      }
+      if(lp&&((lp.deg===1&&lp.acc===0&&!lp.target)||(lp.deg===3&&lp.acc===0&&!lp.target))){
+        if(isDomP(p)||t==="V7")add(5,"Porta alla dominante");
+        if(isTonicP(p))add(lp.deg===3?4:2,lp.deg===3?"Cadenza plagale, morbida":"Torna a casa senza dominante");
+        if(!minor&&lp.deg===3&&lp.upper&&t==="iv")add(3.5,"Ombra dolce-amara");
+        if(lp.deg===3&&t==="ii")add(2.5,"Scende per gradi verso la dominante");
+      }
+      if(lp&&isTonicP(lp)){
+        if(t===IV)add(4,"Apre verso la sottodominante");if(isDomP(p))add(3,"Crea tensione subito");
+        if(t===vi)add(3.5,"Scende alla relativa, più intima");if(t===ii)add(2.5,"Prepara la dominante");
+        if(t==="bVII"||t==="bVI")add(2.5,"Slancio epico");if(t==="iii")add(1.5,"Colore morbido tra tonica e sottodominante");
+      }
+      if(lp&&!minor&&lp.deg===5&&lp.acc===0&&!lp.upper&&!lp.target){if(t==="IV")add(4,"Sale verso la sottodominante");if(t==="ii")add(4,"Prepara la dominante");if(t==="V")add(2,"Va dritto alla dominante");if(t==="iii")add(2.5,"Scende per gradi");}
+      if(lp&&!minor&&lp.deg===2&&lp.acc===0&&!lp.upper){if(t==="vi")add(4,"Scende per quinte verso la relativa");if(t==="IV")add(3,"Passa alla sottodominante");}
+      if(lp&&lp.acc===-1&&lp.deg===5&&lp.upper){if(t==="bVII")add(4.5,"Sale verso la tonica");if(t==="V"||t==="V7")add(3,"Tensione forte prima della tonica");if(t===IV&&minor)add(2,"Colore scuro");}
+      if(lp&&lp.acc===-1&&lp.deg===6&&lp.upper){if(isTonicP(p))add(4.5,minor?"Ritorno deciso alla tonica":"Ritorno trionfale (cadenza epica)");if(t==="bVI")add(2,"Oscilla senza risolvere");if(t==="IV"&&!minor)add(2,"Rock e apertura");}
+      if(lp&&lp.acc===-1&&lp.deg===2&&lp.upper){if(t==="bVI"||t==="IV"||t==="iv")add(3,"Prosegue il colore modale");}
+      if(lp&&minor&&lp.deg===4&&!lp.upper){if(isTonicP(p))add(3,"Chiude in modo morbido (dominante minore)");}
+      if(lp&&minor&&lp.deg===3&&lp.upper){if(isTonicP(p))add(3,"Torna alla tonica con luce dorica");}
+      if(lp&&minor&&lp.deg===1&&lp.acc===-1&&lp.upper&&!lp.target){if(isTonicP(p))add(4,"Ritorno cupo alla tonica (frigio)");}
+      if(t.indexOf("/")>0&&!closing&&n>0&&n<target-1)add(1.5,"Prepara con forza l’accordo successivo");
+      if(closing){if(isDomP(p)||t==="V7")add(3,"Chiude sospeso: il giro riparte");if(isTonicP(p))add(1.5,"Chiude il giro sulla tonica");}
+      if(lastT===t)add(-4,"");
+    }
+    if(G.indexOf(t)>=0||G.indexOf(effTok(t))>=0)add(1.2,why?"":"Tipico del genere scelto");
+    if(!why){var ff=funcOf(t,mode);why={T:"Stabilità di tonica",PD:"Prepara la dominante",D:"Crea tensione",X:"Colore fuori scala"}[ff];}
+    return {tok:t,score:s,why:why};
+  });
+  out.sort(function(a,b){return b.score-a.score;});
+  return out.slice(0,6);
+}
+function palCard(t,why){
+  var e=effTok(t),c=chordOf(e,keyCtx(S.key));if(!c)return "";var f=funcOf(t,S.key.mode);
+  return '<div class="palCard chip f'+f+'" role="button" tabindex="0" draggable="true" data-tok="'+esc(t)+'" aria-label="'+esc(disp(c.name)+", "+prettyRn(e)+(why?", "+why:"")+": clic per ascoltare e aggiungere")+'">'+
+    '<span class="rn">'+esc(prettyRn(e))+'</span><span class="nm">'+esc(disp(c.name))+'</span><span class="fn">'+esc(FN[f])+'</span>'+(why?'<span class="why2">'+esc(why)+'</span>':'')+'</div>';
+}
+function renderBuild(){
+  if(!$("bTimeline"))return;
+  var an=analyzeProgression(B.tokens,S.key),h="";
+  an.forEach(function(a,i){
+    h+='<div class="tlItem chip f'+a.f+'" role="listitem" draggable="true" data-ti="'+i+'" aria-label="'+esc((i+1)+". "+disp(a.c.name)+", "+a.rn+", "+a.role)+'">'+
+      '<span class="tlIdx" aria-hidden="true">'+(i+1)+'</span><span class="rn">'+esc(a.rn)+'</span><span class="nm">'+esc(disp(a.c.name))+'</span>'+(S.notes?'<span class="nt">'+esc(a.c.notes.map(disp).join(" "))+'</span>':'')+
+      '<span class="fn">'+esc(FN[a.f]||"colore")+'</span><span class="role">'+esc(a.role)+'</span>'+
+      '<span class="tlBtns"><button type="button" data-tl="play" data-i="'+i+'" aria-label="Ascolta '+esc(disp(a.c.name))+'">▶</button><button type="button" data-tl="left" data-i="'+i+'" aria-label="Sposta a sinistra"'+(i===0?' disabled':'')+'>←</button><button type="button" data-tl="right" data-i="'+i+'" aria-label="Sposta a destra"'+(i===an.length-1?' disabled':'')+'>→</button><button type="button" data-tl="del" data-i="'+i+'" aria-label="Elimina '+esc(disp(a.c.name))+'">×</button></span></div>';
+  });
+  for(var k=an.length;k<B_MAX;k++)h+='<div class="tlSlot'+(k===an.length?' next':'')+'" data-slot="'+k+'" aria-hidden="'+(k===an.length?'false':'true')+'">'+(k===an.length?'<span>+</span><small>Trascina qui o clicca un accordo</small>':'<span>'+(k+1)+'</span>')+'</div>';
+  $("bTimeline").innerHTML=h;
+  $("bSummary").textContent=progSummary(an,S.key);
+  // azioni: stesso motore di MIDI, anteprima e copia delle altre schede
+  if(PLAY.id==="build")stopPreview();
+  if(an.length){
+    var m={chords:an.map(function(a){return a.c;}),label:an.map(function(a){return a.eff;}),key:S.key,_id:"build"};MIDI_STORE.build=m;
+    var txt=an.map(function(a){return a.rn;}).join(" – ")+"\n"+an.map(function(a){return disp(a.c.name);}).join(" – ");copyStore.build=txt;var L=midiLabel(m);
+    $("bFoot").innerHTML='<button class="act act-play" type="button" data-play="build" aria-pressed="false" aria-label="Ascolta la progressione">▶ Ascolta</button>'+
+      '<button class="act act-midi" type="button" data-midi="build" title="'+esc(midiName(m,loopBars()))+'">'+esc(L.btn)+'</button><button class="copy" type="button" data-copy="build">Copia</button>'+
+      '<button class="act" type="button" id="bClear">Svuota</button><span class="scan" data-scan="build">'+esc(L.scan)+'</span>';
+  }else{delete MIDI_STORE.build;$("bFoot").innerHTML='<span class="muted small">Aggiungi almeno un accordo per ascoltare, scaricare il MIDI o copiare il giro.</span>';}
+  var sg=suggestNextChords(B.tokens,S.key,S.genre||null);
+  $("bSuggHint").textContent=B.tokens.length>=B_MAX?"La timeline è piena: togli un accordo per aggiungerne altri.":(B.tokens.length?"Dopo "+an[an.length-1].rn+" · "+disp(an[an.length-1].c.name)+(S.genre?" · genere: "+GENRES.filter(function(g){return g.id===S.genre;})[0].name:""):"Per aprire il giro"+(S.genre?" · genere: "+GENRES.filter(function(g){return g.id===S.genre;})[0].name:""));
+  $("bSugg").innerHTML=sg.map(function(x){return palCard(x.tok,x.why);}).join("");
+  var pal=PAL[S.key.mode];
+  $("bPalette").innerHTML='<p class="palLab">Gradi della tonalità</p><div class="palRow">'+pal.diat.map(function(t){return palCard(t,"");}).join("")+'</div><p class="palLab">Colore, prestiti e dominanti secondarie</p><div class="palRow">'+pal.color.map(function(t){return palCard(t,"");}).join("")+'</div>';
+}
+function bMsg(t){$("bMsg").textContent=t||"";}
+function bAdd(t,at){
+  if(B.tokens.length>=B_MAX){bMsg("La timeline è piena (8 accordi): togli un accordo per aggiungerne altri.");return false;}
+  if(at===undefined||at>B.tokens.length)at=B.tokens.length;B.tokens.splice(at,0,t);bMsg("");renderBuild();return true;
+}
+function bMove(from,to){
+  if(from===to||from<0||from>=B.tokens.length)return;to=Math.max(0,Math.min(B.tokens.length-1,to));
+  var t=B.tokens.splice(from,1)[0];B.tokens.splice(to,0,t);renderBuild();
+}
+function bDel(i){B.tokens.splice(i,1);bMsg("");renderBuild();}
+function bClear(){B.tokens=[];bMsg("");renderBuild();}
+// audizione di un singolo accordo (0,7 s): stesso AudioContext e stesso timbro dell'anteprima del giro
+function auditionChord(c){
+  var ctx=actx();if(!ctx||!c)return;
+  if(AUD){try{var t0=ctx.currentTime;AUD.gain.cancelScheduledValues(t0);AUD.gain.setValueAtTime(AUD.gain.value,t0);AUD.gain.linearRampToValueAtTime(0,t0+0.03);}catch(e){}var old=AUD;setTimeout(function(){try{old.disconnect();}catch(e){}},60);}
+  var master=ctx.createGain();master.gain.value=0.8;var lp=ctx.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2000;lp.Q.value=0.4;lp.connect(master);master.connect(ctx.destination);AUD=master;
+  var v=voicing(c,null),t=ctx.currentTime+0.02,d=0.7,end=t+d*0.85,rel=0.18,k=1/Math.sqrt(v.notes.length);
+  v.notes.forEach(function(n,j){
+    var f=440*Math.pow(2,(n-69)/12),g=ctx.createGain(),pk=(j===0?0.22:0.15)*k,sus=pk*0.6;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(pk,t+0.02);g.gain.linearRampToValueAtTime(sus,t+0.22);g.gain.setValueAtTime(sus,end);g.gain.linearRampToValueAtTime(0,end+rel);g.connect(lp);
+    [["triangle",0],["sine",4]].forEach(function(o){var osc=ctx.createOscillator();osc.type=o[0];osc.frequency.value=f;osc.detune.value=o[1];osc.connect(g);osc.start(t);osc.stop(end+rel+0.05);});
+  });
+  setTimeout(function(){if(AUD===master){try{master.disconnect();}catch(e){}AUD=null;}},(d+0.4)*1000);
+}
+function auditionTok(t){var c=chordOf(effTok(t),keyCtx(S.key));if(c)auditionChord(c);}
+function wireBuild(){
+  var panel=$("p-build"),drag=null;
+  function clearOver(){Array.prototype.forEach.call(panel.querySelectorAll(".over"),function(el){el.classList.remove("over");});}
+  function slotIndex(el){if(!el)return null;if(el.hasAttribute("data-ti"))return parseInt(el.getAttribute("data-ti"),10);if(el.hasAttribute("data-slot"))return B.tokens.length;return null;}
+  panel.addEventListener("click",function(e){
+    var tl=e.target.closest&&e.target.closest("[data-tl]");
+    if(tl){var i=parseInt(tl.getAttribute("data-i"),10),a=tl.getAttribute("data-tl");
+      if(a==="play"){var an=analyzeProgression(B.tokens,S.key);if(an[i])auditionChord(an[i].c);}
+      else if(a==="left")bMove(i,i-1);else if(a==="right")bMove(i,i+1);else if(a==="del")bDel(i);
+      return;}
+    if(e.target.closest&&e.target.closest("#bClear")){bClear();return;}
+    var pc=e.target.closest&&e.target.closest(".palCard");
+    if(pc){var t=pc.getAttribute("data-tok");auditionTok(t);bAdd(t);return;}
+    var it=e.target.closest&&e.target.closest(".tlItem");
+    if(it){var an2=analyzeProgression(B.tokens,S.key),j=parseInt(it.getAttribute("data-ti"),10);if(an2[j])auditionChord(an2[j].c);}
+  });
+  panel.addEventListener("keydown",function(e){
+    var pc=e.target.closest&&e.target.closest(".palCard");
+    if(pc&&(e.key==="Enter"||e.key===" ")){e.preventDefault();var t=pc.getAttribute("data-tok");auditionTok(t);bAdd(t);}
+  });
+  panel.addEventListener("dragstart",function(e){
+    var pc=e.target.closest&&e.target.closest(".palCard"),it=e.target.closest&&e.target.closest(".tlItem");
+    if(pc){drag={src:"pal",tok:pc.getAttribute("data-tok")};try{e.dataTransfer.effectAllowed="copy";e.dataTransfer.setData("text/plain",drag.tok);}catch(x){}}
+    else if(it){drag={src:"tl",i:parseInt(it.getAttribute("data-ti"),10)};it.classList.add("dragging");try{e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",String(drag.i));}catch(x){}}
+  });
+  panel.addEventListener("dragover",function(e){
+    if(!drag)return;var tgt=e.target.closest&&(e.target.closest(".tlItem")||e.target.closest(".tlSlot")||e.target.closest("#bTimeline"));if(!tgt)return;
+    e.preventDefault();try{e.dataTransfer.dropEffect=drag.src==="pal"?"copy":"move";}catch(x){}
+    var el=e.target.closest(".tlItem")||e.target.closest(".tlSlot.next")||(drag.src==="pal"?$("bTimeline").querySelector(".tlSlot.next"):null);
+    clearOver();if(el)el.classList.add("over");
+  });
+  panel.addEventListener("dragleave",function(e){if(e.target.classList&&e.target.classList.contains("over")&&!e.target.contains(e.relatedTarget))e.target.classList.remove("over");});
+  panel.addEventListener("drop",function(e){
+    if(!drag)return;var tl=e.target.closest&&e.target.closest("#bTimeline");if(!tl)return;e.preventDefault();
+    var el=e.target.closest(".tlItem")||e.target.closest(".tlSlot"),idx=slotIndex(el);if(idx===null)idx=B.tokens.length;
+    if(drag.src==="pal"){auditionTok(drag.tok);bAdd(drag.tok,idx);}else if(drag.src==="tl")bMove(drag.i,Math.min(idx,B.tokens.length-1));
+    drag=null;clearOver();
+  });
+  panel.addEventListener("dragend",function(){drag=null;clearOver();Array.prototype.forEach.call(panel.querySelectorAll(".dragging"),function(el){el.classList.remove("dragging");});});
+}
+function editInBuilder(id){
+  var m=MIDI_STORE[id];if(!m||!m.tokens)return;
+  B.tokens=m.tokens.slice(0,B_MAX);bMsg(m.tokens.length>B_MAX?"Caricati i primi 8 accordi.":"");
+  showTab("build");renderBuild();$("p-build").scrollIntoView({behavior:"smooth",block:"start"});
+}
 /* ---------- impostazioni e tab ---------- */
 function refresh(){
   stopPreview();
   var cur=S.key.name+":"+S.key.mode,cur2=$("toKey").value;
   fillKeys($("key"),cur);fillKeys($("toKey"),cur2||"G:major");fillTargets();
   [["genOut",doGenerate],["emoOut",doRecommend],["apOut",doApproach],["modOut",doModulate]].forEach(function(x){if($(x[0]).innerHTML.trim()!=="")x[1]();});
+  renderBuild();
 }
-function showTab(id){["gen","emo","ap","mod"].forEach(function(t){$("p-"+t).classList.toggle("hidden",t!==id);$("t-"+t).setAttribute("aria-selected",t===id?"true":"false");});}
+function showTab(id){["gen","build","emo","ap","mod"].forEach(function(t){$("p-"+t).classList.toggle("hidden",t!==id);$("t-"+t).setAttribute("aria-selected",t===id?"true":"false");});}
 function copyText(t,btn){
   var done=function(ok){var old=btn.textContent;btn.textContent=ok?"Copiato":"Seleziona e copia";setTimeout(function(){btn.textContent="Copia";},1800);};
   try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){done(true);},function(){fb();});return;}}catch(e){}
@@ -721,9 +1007,11 @@ function copyText(t,btn){
 document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-copy]");if(b)copyText(copyStore[b.getAttribute("data-copy")],b);});
 document.addEventListener("click",function(e){
   var mb=e.target.closest&&e.target.closest("[data-midi]");if(mb){downloadMidi(mb.getAttribute("data-midi"));return;}
+  var eb=e.target.closest&&e.target.closest("[data-edit]");if(eb){editInBuilder(eb.getAttribute("data-edit"));return;}
   var pb=e.target.closest&&e.target.closest("[data-play]");if(pb){var id=pb.getAttribute("data-play");if(PLAY.id===id)stopPreview();else startPreview(id);}
 });
-$("loopBars").addEventListener("change",relabel);
+$("loopBars").addEventListener("change",function(){relabel();renderBuild();});
+wireBuild();renderBuild();
 $("bpm").addEventListener("input",checkBpm);$("bpm").addEventListener("change",function(){checkBpm();$("bpm").value=String(bpmVal());$("bpm").removeAttribute("aria-invalid");$("bpmMsg").textContent="";});
 $("themeBtn").addEventListener("click",function(){applyTheme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light");});
 window.addEventListener("storage",function(e){if(e.key==="qc_theme"&&(e.newValue==="light"||e.newValue==="dark")&&e.newValue!==document.documentElement.getAttribute("data-theme"))applyTheme(e.newValue);});
@@ -735,13 +1023,13 @@ $("ext").addEventListener("change",function(){S.ext=$("ext").checked;refresh();}
 $("notes").addEventListener("change",function(){S.notes=$("notes").checked;refresh();});
 $("go").addEventListener("click",doGenerate);$("emoGo").addEventListener("click",doRecommend);$("apGo").addEventListener("click",doApproach);$("modGo").addEventListener("click",doModulate);
 $("energy").addEventListener("input",function(){$("energyLab").textContent=["molto calma","calma","media","intensa","molto intensa"][parseInt($("energy").value,10)-1];});
-["gen","emo","ap","mod"].forEach(function(t){$("t-"+t).addEventListener("click",function(){showTab(t);});});
+["gen","build","emo","ap","mod"].forEach(function(t){$("t-"+t).addEventListener("click",function(){showTab(t);});});
 $("genre").innerHTML='<option value="">Nessun genere</option>'+GENRES.map(function(g){return '<option value="'+g.id+'">'+g.name+'</option>';}).join("");
 $("emo").innerHTML=EMOTIONS.map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>';}).join("");
 fillKeys($("key"),"C:major");fillKeys($("toKey"),"G:major");fillTargets();
 $("energyLab").textContent="media";
 window.__pt={setKey:function(v){$("key").value=v;S.key=keyOf(v);refresh();},gen:doGenerate,emo:doRecommend,ap:doApproach,mod:doModulate,S:S,
-  planBeats:planBeats,voicing:voicing,buildMidi:buildMidi,midiName:midiName,parseChordName:parseChordName,store:function(){return MIDI_STORE;},preview:function(){return PLAY;},audio:function(){return AC;}};
+  planBeats:planBeats,voicing:voicing,buildMidi:buildMidi,midiName:midiName,parseChordName:parseChordName,store:function(){return MIDI_STORE;},build:B,renderBuild:renderBuild,analyze:analyzeProgression,suggest:suggestNextChords,addTok:bAdd,moveTok:bMove,editInBuilder:editInBuilder,preview:function(){return PLAY;},audio:function(){return AC;}};
 })();
 
 </script>
